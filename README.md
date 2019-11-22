@@ -663,3 +663,4 @@ Unofficial, but hugely helpful, documentation on WireGuard.
 - Add an [SSL certificate for the Pi-Hole Web Interface](https://scotthelme.co.uk/securing-dns-across-all-of-my-devices-with-pihole-dns-over-https-1-1-1-1/)
 - Include [whitelist and blacklist additions](https://scotthelme.co.uk/catching-naughty-devices-on-my-home-network/)
 - Get local hostnames working in Pi-Hole so we can see device names instead of local IP addresses
+- Add support for guest networks (specifically for Apple routers like mine)
