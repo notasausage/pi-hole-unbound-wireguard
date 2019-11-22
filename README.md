@@ -95,7 +95,7 @@ Where `pi` is the username on your Raspberry Pi and `192.168.x.x` is the static 
 **Note**: If you get an error that says the host identification has changed, you’ll need to remove the old entry (the one with the same static IP address) from your `~/.ssh/known_hosts` file first, then try again.
 
 ##### Passwordless SSH Access
-It's possible to [configure the Raspberry Pi to allow a computer to access it without providing a password each time](https://www.raspberrypi.org/documentation/remote-access/ssh/passwordless.md) you try to connect. In your Mac's Terminal app, generate SSH key pairs with:
+It's possible to [configure the Raspberry Pi to allow a computer to access it without providing a password each time](https://www.raspberrypi.org/documentation/remote-access/ssh/passwordless.md) you try to connect. In your Mac's Terminal app, [generate SSH key pairs](https://www.ssh.com/ssh/keygen/) with:
 ```
 ssh-keygen -t rsa -b 4096
 ```
@@ -106,7 +106,7 @@ ssh-copy-id pi@192.168.x.x
 where `pi` is the username you use on the Raspberry Pi and the `192.168.x.x` is the static IP address of the Raspberry Pi. You'll need to enter the password for the `pi` user to confirm the copy.
 
 ##### Keep Client SSH Keys in macOS Keychain
-You can store your SSH key(s) in your Mac's Keychain for easy (and secure) access. Add your newly created SSH key pair to the macOS Keychain with:
+Using [an SSH agent](https://www.ssh.com/ssh/agent), you can store your SSH key(s) in your Mac's Keychain for easy (and secure) access. Add your newly created SSH key pair to the macOS Keychain with:
 ```
 ssh-add -K ~/.ssh/id_rsa_pi
 ```
@@ -130,7 +130,7 @@ sudo raspi-config
 + Under **Localisation Options**, change the timezone to match yours
 
 ### Update Raspbian and Packages
-Once you've got everything up and running, you'll want to update all the Raspbian packages and upgrade any that need it using [APT (Advanced Packaging Tool)](https://wiki.debian.org/Apt) by running:
+Once you've got everything up and running, you'll want to [update all the Raspbian packages and upgrade any that need it](https://www.raspberrypi.org/documentation/raspbian/updating.md) using [APT (Advanced Packaging Tool)](https://wiki.debian.org/Apt) by running:
 ```
 sudo apt update
 ```
@@ -139,6 +139,13 @@ to update packages and then:
 sudo apt-get upgrade -y
 ```
 to upgrade any packages you have installed to their latest versions. This may take a while, so you may want to go grab a coffee, beer, tea...
+
+**Note**: If at any point during an `apt update` your package cache file is corrupted, remove your apt lists and refresh them using:
+```
+sudo rm -r /var/lib/apt/lists/
+sudo mkdir -p /var/lib/apt/lists/partial
+sudo apt-get update
+```
 
 ## Backup and Restore a Raspberry Pi
 Throughout the process of setting things up, you may want to have a backup of your Raspberry Pi so you don’t have to start from scratch if you make a mistake like I have (several times). You may even want to clone your Raspberry Pi after each successful step so you can return to it if the next step goes wrong. For instance, I was sure to create a backup of my Raspberry Pi after initial setup, after I had Pi-Hole working, after I added Unbound, and after I got WireGuard setup. That way if I made any changes that broke my setup, I could always revert the previous working installation.
@@ -235,8 +242,16 @@ To make sure Pi-Hole is working, you can set a single device to use it as its DN
 
 Restart your router and watch as the Pi-Hole Dashboard (now available on your internal network at http://pi.hole/admin) fills up with blocked queries!
 
+**Note**: If at any point your Raspberry Pi loses its connection with the outside world and you want to set a temporary DNS server to resolve it, run:
+```
+echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null
+```
+to temporarily set the device's DNS server to Google until you can figure out what you did. This will reset on reboot.
+
 ## Setup Unbound as Your DNS Service
 > [Unbound](https://www.nlnetlabs.nl/projects/unbound/about/) is a validating, recursive, caching DNS resolver. It is designed to be fast and lean and incorporates modern features based on open standards.
+
+Setting up Unbound DNS with your Pi-Hole installation allows us to [operate our own tiny, recursive DNS server](https://docs.pi-hole.net/guides/unbound/) instead of relying on (and sending data to) the big players like Google or Cloudflare.
 
 To install Unbound on the Raspberry Pi:
 ```
@@ -382,7 +397,7 @@ Then switch to the directory where we'll store the WireGuard keys:
 ```
 cd /etc/wireguard
 ```
-If this directory doesn't exist, just run `mkdir /etc/wireguard` and then `cd /etc/wireguard`. Set permissions on the entire directory so that only the `root` user can read or write data here:
+If this directory doesn't exist, just run `mkdir /etc/wireguard` and then `cd /etc/wireguard`. Set permissions on the entire directory with the [`umask` command](https://www.cyberciti.biz/tips/understanding-linux-unix-umask-value-usage.html) so that only the `root` user can read or write data here:
 ```
 umask 077
 ```
@@ -610,26 +625,41 @@ Once you've added this port forwarding on your network's router, restart the dev
 ## References
 There are several write-ups out there on how to do this, as well as install scripts to do it for you. Since the Raspberry Pi was meant to be a learning tool, I used this opportunity to figure things out on my own with the help of documentation from both software creators and the community. If it weren't for the latter, I doubt I would've been able to do this on my own. Thanks to everyone who has taken the time to share their knowledge, and experience, in setting up a Raspberry Pi.
 
-### Build Your Own Wireguard VPN Server with Pi-Hole for DNS Level Ad Blocking
+**Build Your Own Wireguard VPN Server with Pi-Hole for DNS Level Ad Blocking**
 https://www.sethenoka.com/build-your-own-wireguard-vpn-server-with-pi-hole-for-dns-level-ad-blocking/
-Includes some additional firewall setup with IPtables, which I skipped.
+Seth Enoka's write-up includes some additional firewall setup with IPtables, which I skipped. But this is an excellent reference for what we're doing, even though he uses a VPS with Ubuntu rather than a Raspberry Pi.
 
-### Raspbian GNU/Linux 10 (buster) Lite
+**Raspbian GNU/Linux 10 (buster) Lite**
 https://github.com/harrypnyce/raspbian10-buster
 Harry Nyce posted [his Pi experiments on Reddit](https://www.reddit.com/r/pihole/comments/c62np8/pihole_with_unbound_wireguard_vpn_server_on_a/), which prompted me to start this endeavor. I found his notes helpful, though the process was confusing at times.
 
-### AdBlocking VPN Proxy Server (Pi-hole, Wireguard, Privoxy, Unbound)
+**AdBlocking VPN Proxy Server (Pi-hole, Wireguard, Privoxy, Unbound)**
 https://github.com/crozuk/pi-hole-wireguard-privoxy
 Richard Crosby's overview here is great, though missing some of the details. He's also adding a VPN proxy server, which I decided to skip.
 
-### Set up Pi-hole as truly self-contained DNS resolver
+**Set up Pi-hole as truly self-contained DNS resolver**
 https://github.com/anudeepND/pihole-unbound
 Anudeep's setup of Unbound to work with Pi-Hole was extremely helpful to understand how the two work together.
 
-### Unbound: How to enable DNSSEC
+**Unbound: How to enable DNSSEC**
 https://www.nlnetlabs.nl/documentation/unbound/howto-anchor/
 NLnet Labs explains what DNSSEC is and how to enable it in Unbound.
 
-### Easy As Pi Installer
+**Easy As Pi Installer**
 https://github.com/ShaneCaler/EasyAsPiInstaller
 Shane Caler's "one-stop-shop" to set up WireGuard, Pi-Hole, and Unbound on a Raspberry Pi. I didn't have a chance to try this out, but it might be a nice replacement for all of this at some point (and it's also probably a good place to learn).
+
+**WireGuard Installation (Raspberry Pi 2 v1.2 and above)**
+https://github.com/adrianmihalko/raspberrypiwireguard
+Adrian Mihalko's execellent instructions on installing WireGuard on a Raspberry Pi.
+
+**Some Unofficial WireGuard Documentation**
+https://github.com/pirate/wireguard-docs
+Unofficial, but hugely helpful, documentation on WireGuard.
+
+## To-Do
+- Include screenshots of setup processes
+- Move from [IPtables (deprecated) to nftables](https://wiki.nftables.org/wiki-nftables/index.php/Moving_from_iptables_to_nftables)
+- Add an [SSL certificate for the Pi-Hole Web Interface](https://scotthelme.co.uk/securing-dns-across-all-of-my-devices-with-pihole-dns-over-https-1-1-1-1/)
+- Include [whitelist and blacklist additions](https://scotthelme.co.uk/catching-naughty-devices-on-my-home-network/)
+- Get local hostnames working in Pi-Hole so we can see device names instead of local IP addresses
