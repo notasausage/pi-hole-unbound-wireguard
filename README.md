@@ -608,12 +608,28 @@ Where `192.168.x.x` is the internal static IP address of the Raspberry Pi runnin
 Once you've added this port forwarding on your network's router, restart the device and now you should be able to connect to your WireGuard VPN from outside your network and enjoy the benefits of network-level ad-blocking from anywhere, at any time!
 
 ## References
-
 There are several write-ups out there on how to do this, as well as install scripts to do it for you. Since the Raspberry Pi was meant to be a learning tool, I used this opportunity to figure things out on my own with the help of documentation from both software creators and the community. If it weren't for the latter, I doubt I would've been able to do this on my own. Thanks to everyone who has taken the time to share their knowledge, and experience, in setting up a Raspberry Pi.
 
+### Build Your Own Wireguard VPN Server with Pi-Hole for DNS Level Ad Blocking
 https://www.sethenoka.com/build-your-own-wireguard-vpn-server-with-pi-hole-for-dns-level-ad-blocking/
+Includes some additional firewall setup with IPtables, which I skipped.
+
+### Raspbian GNU/Linux 10 (buster) Lite
 https://github.com/harrypnyce/raspbian10-buster
+Harry Nyce posted [his Pi experiments on Reddit](https://www.reddit.com/r/pihole/comments/c62np8/pihole_with_unbound_wireguard_vpn_server_on_a/), which prompted me to start this endeavor. I found his notes helpful, though the process was confusing at times.
+
+### AdBlocking VPN Proxy Server (Pi-hole, Wireguard, Privoxy, Unbound)
 https://github.com/crozuk/pi-hole-wireguard-privoxy
+Richard Crosby's overview here is great, though missing some of the details. He's also adding a VPN proxy server, which I decided to skip.
+
+### Set up Pi-hole as truly self-contained DNS resolver
 https://github.com/anudeepND/pihole-unbound
+Anudeep's setup of Unbound to work with Pi-Hole was extremely helpful to understand how the two work together.
+
+### Unbound: How to enable DNSSEC
 https://www.nlnetlabs.nl/documentation/unbound/howto-anchor/
+NLnet Labs explains what DNSSEC is and how to enable it in Unbound.
+
+### Easy As Pi Installer
 https://github.com/ShaneCaler/EasyAsPiInstaller
+Shane Caler's "one-stop-shop" to set up WireGuard, Pi-Hole, and Unbound on a Raspberry Pi. I didn't have a chance to try this out, but it might be a nice replacement for all of this at some point (and it's also probably a good place to learn).
