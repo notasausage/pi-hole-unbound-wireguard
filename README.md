@@ -48,7 +48,7 @@ You can also follow along with [these instructions on adding a temporary user an
 ### Prepping Raspbian for SSH
 We should enable SSH on the Raspberry Pi so that we can SSH into it from any device on the network, thus no longer needing the mouse, keyboard, HDMI cable, and screen. You'll need to know the IP address of your Raspberry Pi to continue.
 
-### Setting Up a Static IP Address
+#### Setting Up a Static IP Address
 First we need the IP address and MAC address of the Raspberry Pi. It's highly recommeneded that you setup a static IP address on your network for your Raspberry Pi so that you can easily SSH into it, and later, point other services directly to it.
 
 To get the current IP address of your Raspberry Pi, run:
@@ -74,7 +74,7 @@ IPv4 Address: 192.168.x.x
 ```
 Once you've created a static IP address of your choosing (matching your router's existing subnet schema), save your changes and restart your router.
 
-### Enabling SSH on the Raspberry Pi
+#### Enabling SSH on the Raspberry Pi
 Now we'll open the Raspberry Pi's Configuration Tool:
 ```
 sudo raspi-config
@@ -83,77 +83,126 @@ Under the **Interfacing Options** group, go to **SSH** and enable it. You should
 ```
 sudo reboot
 ```
-## SSH into the Raspberry Pi
+##### Verify You Can SSH into the Raspberry Pi
 Now that you've enabled SSH on the Raspberry Pi and given it a static IP address, you should be able to do all of the following setup from another device by connecting via SSH. I'll be using a Mac in the following steps.
 
 Open the macOS Terminal application and type:
 ```
-ssh raspberrypi@192.168.x.x
+ssh pi@192.168.x.x
 ```
-Where `192.168.x.x` is the static IP address you just setup for your Raspberry Pi. Then type the new password you set for the `pi` user to login.
+Where `pi` is the username on your Raspberry Pi and `192.168.x.x` is the static IP address you just setup. Then type the new password you set for the `pi` user to login. You should now be greeted with the Raspian console.
 
 **Note**: If you get an error that says the host identification has changed, you’ll need to remove the old entry (the one with the same static IP address) from your `~/.ssh/known_hosts` file first, then try again.
 
-## Setup SSH Keys
-On your computer (Mac in this case), open Terminal
-Generate SSH key pairs with `ssh-keygen -t rsa -b 4096` and enter a password for SSH key
-If you already have SSH key(s), give this pair a different name (id_rsa_pi)
-Copy public key to your Raspberry Pi with `ssh-copy-id username@IP_ADDRESS` where username is the username you use on the Pi and the IP_ADDRESS is the IP or hostname of your Pi
-Enter your Pi username’s password to confirm the copy
-Store the SSH key in your macOS Keychain with `ssh-add -K ~/.ssh/id_rsa_pi` or whatever you named your SSH key pair
-Enter your macOS passphrase
-Configure SSH to always use your Mac’s Keychain by adding to your `~/.ssh/config` file
-https://apple.stackexchange.com/a/250572
-If you already have one, add a new `IdentityFile` line with the name of this new key
-Now SSH into your Pi in your Mac’s Terminal by typing `ssh username@IP_ADDRESS` where IP_ADDRESS is the IP or hostname of your Pi, and you shouldn’t have to enter a password again!
+##### Generate Client SSH Keys
+In your Mac's Terminal app, generate SSH key pairs with:
+```
+ssh-keygen -t rsa -b 4096
+```
+and enter a password for the SSH key (store this somewhere secure, you may need it at a later time). If you already have SSH key(s), give this pair a different name (such as `id_rsa_pi`). Now that the public and private keys have been generated on your Mac, you'll need to copy the public key to your Raspberry Pi using:
+```
+ssh-copy-id pi@192.168.x.x
+```
+where `pi` is the username you use on the Raspberry Pi and the `192.168.x.x` is the static IP address of the Raspberry Pi. You'll need to enter the password for the `pi` user to confirm the copy.
 
-## Optional: Additional Raspbian Configuration
-Run `sudo raspi-config` to get Configuration tool
-Change Hostname to something other than `raspberrypi` under Network Options
-Change Locale under Localisation Options (add en-us UTF8 to en-gb UTF8, then select US as default, then change timezone)
+##### Keep Client SSH Keys in macOS Keychain
+You can store your SSH key(s) in your Mac's Keychain for easy (and secure) access. Add your newly created SSH key pair to the macOS Keychain with:
+```
+ssh-add -K ~/.ssh/id_rsa_pi
+```
+where `id_rsa_pi` is the name you used to create the SSH key pair. Enter your macOS password to confirm. In order to prevent macOS from forgetting your SSH keys on restart, you can add it to your `~/.ssh/config` file based on [these instructions](https://apple.stackexchange.com/a/250572). Your `~/.ssh/config` file should look something like this:
+```
+Host *
+    UseKeychain yes
+    AddKeysToAgent yes
+    IdentityFile ~/.ssh/id_rsa
+    IdentityFile ~/.ssh/id_rsa_pi
+```
+Now once again, SSH into your Raspberry Pi using the Terminal application by typing `ssh pi@192.168.x.x` where `192.168.x.x` is the static IP address of your Raspberry Pi, and you shouldn’t have to enter a password again from this device! Repeat these steps on other devices to generate and share their SSH key(s) with the Raspberry Pi.
 
-## Update Raspbian and Packages
-Run `sudo apt update` and then `sudo apt-get upgrade -y`
-This may take a while, so grab a coffee/beer/tea…
+### Optional: Additional Raspbian Configuration
+Here are some additional steps I prefer to take upon setting up my Raspberry Pi. First, open the Configuration Tool via your SSH session:
+```
+sudo raspi-config
+```
++ Under **Network Options**, change the **Hostname** to something other than `raspberrypi` (most of the devices on my network are [named after Transformers](https://tfwiki.net/wiki/The_Transformers_(toyline))).
++ Under **Localisation Options**, add to the **Locale** `en-us UTF8` and select it as the default locale (*do not* remove the default `en-gb UTF8` as it seems to cause issues)
++ Under **Localisation Options**, change the timezone to match yours
 
-## Optional: Create a Backup of Your Pi SD Card
-Once you get to this point, you may want to have a backup of your Raspberry Pi setup so you don’t have to start from scratch if you make a mistake like I have (several times). You may also want to do this again after you have a working Pi-Hole + Unbound + Wireguard setup.
-Shutdown your Raspberry Pi with `sudo halt` which is short for `sudo shutdown -h now`
-Remove the SD card from your Raspberry Pi
-Using a supported SD card reader, insert the SD card from your Raspberry Pi into your Mac
-On a Mac, open Terminal and type `diskutil list` to see a list of drives attached to your Mac
-Create a Disk Image of the SD card: `sudo dd if=/dev/disk2 of=~/RaspberryPiBackup.dmg` where `/dev/disk2` is the path to your SD card’s disk and `~/RaspberryPiBackup.dmg` is the path and filename on your Mac to save the Disk Image
-Enter your Mac user’s password when prompted
-This may take a while depending on the size of your SD card and what you have installed on it
+### Update Raspbian and Packages
+Once you've got everything up and running, you'll want to update all the Raspbian packages and upgrade any that need it using [APT (Advanced Packaging Tool)](https://wiki.debian.org/Apt) by running:
+```
+sudo apt update
+```
+to update packages and then:
+```
+sudo apt-get upgrade -y
+```
+to upgrade any packages you have installed to their latest versions. This may take a while, so you may want to go grab a coffee, beer, tea...
 
-Note: If you get input/output errors try using Disk Utility instead.
+## Backup and Restore a Raspberry Pi
+Throughout the process of setting things up, you may want to have a backup of your Raspberry Pi so you don’t have to start from scratch if you make a mistake like I have (several times). You may even want to clone your Raspberry Pi after each successful step so you can return to it if the next step goes wrong. For instance, I was sure to create a backup of my Raspberry Pi after initial setup, after I had Pi-Hole working, after I added Unbound, and after I got WireGuard setup. That way if I made any changes that broke my setup, I could always revert the previous working installation.
 
-Open the macOS Disk Utility
-Choose View > Show All Devices
-Right click on the device name of the SD card and not the partition(s)
-Choose the “Image from ‘DEVICE NAME’” option
-Give the file a name and choose a location to save it
-Choose the DVD/CD master option for Format, and no Encryption
-Disk Utility will create a .CDR file with your SD card’s files
+### Backup the Raspberry Pi SD Card
+There are many ways to do this, but if you're on a Mac there is a very simple (and free) solution. You'll want to download the [ApplePi-Baker](https://www.tweaking4all.com/hardware/raspberry-pi/applepi-baker-v2/) app for macOS, which handles backing up your Raspberry Pi's SD card and can restore from several different formats as well.
 
-Or better yet, just use the free ApplePi-Baker for macOS to do backups and restores. It can even shrink/expand some Linux partitions so that the resulting .IMG file is much smaller than the actual SD card’s capacity.
-https://www.tweaking4all.com/hardware/raspberry-pi/applepi-baker-v2/
+At any point you want to backup your Raspberry Pi's configuration, first shutdown the device with:
+```
+sudo halt
+```
+or the more verbose:
+```
+sudo shutdown -h now
+```
+and then unplug your Rasbperry Pi (or get a [Pi Switch](https://amzn.to/2s7axRP) to make life easier). Remove the SD card from the Raspberry Pi and insert into a supported SD card reader (like the [Anker 2-in-1 card reader](https://amzn.to/2OaNBd1) I mentioned earlier), and connect to your Mac.
 
-## Optional: Restore Your Pi from Backup
-If you’ve made a backup of your Raspberry Pi’s SD card previously, you can restore it any time. If you used a Mac to create the backup as a Disk Image, use the following instructions
-Shutdown your Raspberry Pi with `sudo halt` which is short for `sudo shutdown -h now`
-Remove the SD card from your Raspberry Pi
-Using a supported SD card reader, insert the SD card from your Raspberry Pi into your Mac
-On a Mac, open Terminal and type `diskutil list` to see a list of drives attached to your Mac
-Unmount the SD card: `diskutil unmountDisk /dev/disk2` where `/dev/disk2` is the path to your SD card’s disk
-Restore the SD card from backup: `sudo dd if=~/RaspberryPiBackup.dmg of=/dev/disk2` where `/dev/disk2` is the path to your SD card’s disk and `~/RaspberryPiBackup.dmg` is the path and filename on your Mac to save the Disk Image
-This may take a while depending on the size of your SD card backup
+When you open the ApplePi-Baker app, you should be able to select the SD card from the **Select a Disk** options (make sure you select the right disk), then choose the **Backup** option. In the file choose window, select **IMG** from the Format selections at the bottom of the window, and then give the backup file a name. This should take some time, be prepared to wait.
 
-Note: If you backed up the SD card as a .CDR, you can rename it to .ISO and restore it to any SD card with the free Etcher (https://www.balena.io/etcher/) software for macOS
+**Note**: The IMG format allows ApplePi-Baker to shrink the Linux partition on backup and expand it on restore, saving you from having to backup the entire size of the SD card rather than just the actual contents.
 
-Give Your Raspberry Pi a Static IP
-Using your network router’s admin software, setup a static IP address for the Raspberry Pi so it doesn’t change during a restart or after a network outage. When setting up Pi-Hole and other services, you’ll use this static IP address in configuration files.
-Make sure to reboot the Raspberry Pi after you set this up: `sudo reboot`
+#### Using the macOS Terminal
+Another way to backup your SD card on a Mac is to open Terminal and type:
+```
+diskutil list
+```
+to see a list of drives attached to your Mac. To create a Disk Image of the SD card:
+```
+sudo dd if=/dev/rdisk2 of=~/RaspberryPiBackup.dmg
+```
+where `/dev/rdisk2` is the path to your SD card’s disk (with an added `r`) and `~/RaspberryPiBackup.dmg` is the path and filename on your Mac to save the Disk Image. Enter your Mac user’s password when prompted. This may take a while depending on the size of your SD card and what you have installed on it.
+
+**Note**: If you see any input/output errors, try using Disk Utility instead.
+
+#### Using the macOS Disk Utility
+Open the macOS Disk Utility application, and choose View > Show All Devices. Right click on the device name of the SD card (not the individual partition(s)!) and choose the **Image from ‘DEVICE NAME’** option. Give the file a name and choose a location to save it. Choose the DVD/CD master option for Format, and no Encryption. Disk Utility will create a .CDR file with your SD card’s files.
+
+**Note**: Both the Disk Utility and Terminal methods failed for me, both creating input/output errors. Maybe it was my SD card, or my card reader, but then using ApplePi-Baker gave me no issues, so I didn't bother to investigate further.
+
+### Restoring a Raspberry Pi from Backup
+If you’ve made a backup of your Raspberry Pi’s SD card previously, you can restore it any time and overrite your current configuration. Using the ApplePi-Baker app on macOS, this is a simple task.
+
+First, shutdown your Raspberry Pi:
+```
+sudo halt
+```
+and remove the SD card from your Raspberry Pi. Using a supported SD card reader, insert the SD card from your Raspberry Pi into your Mac. Launch the ApplePi-Baker app and select the correct SD card disk, then choose the **Restore** option. ApplePi-Baker will expand the backup file and overrite the complete contents of your SD card with the backup file's contents, so make sure you really want to do this.
+
+#### Using the macOS Terminal to Restore
+You can also use the macOS Terminal application to this by typing:
+```
+diskutil list
+```
+to see a list of drives attached to your Mac. You'll need to unmount the SD card to proceed (your Mac can still see the files, but you won't see the mounted disk(s) anymore):
+```
+diskutil unmountDisk /dev/disk2
+```
+where `/dev/disk2` is the path to your SD card’s disk. Restore the SD card from backup using:
+```
+sudo dd if=~/RaspberryPiBackup.dmg of=/dev/disk2
+```
+where `/dev/disk2` is the path to your SD card’s disk and `~/RaspberryPiBackup.dmg` is the path and filename on your Mac to save the Disk Image. This may take a while depending on the size of your SD card backup
+
+**Note**: If you backed up the SD card as a .CDR, you can rename it to .ISO and restore it to any SD card with the free [Etcher application](https://www.balena.io/etcher/) for macOS.
 
 ## Installing Pi-Hole
 Run the Pi-Hole installer: `sudo curl -sSL https://install.pi-hole.net | bash`
