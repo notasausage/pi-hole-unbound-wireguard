@@ -1,28 +1,98 @@
 # Raspberry Pi: Pi-Hole Ad-Blocking + Unbound DNS + Wireguard VPN
+This project is centered around getting a Raspberry Pi setup on a simple home network in order to block ads and naughty DNS requests, secure the DNS requests of all devices on the network, and provide a VPN solution for when any of these devices are outside of the network and would like to take advantage of the security (and speed) benefits of the network remotely.
 
-This setup was done on a Raspberry Pi 3 Model B Plus Rev 1.3 with a 16GB MicroSD card. A MacBook Pro running macOS Mojave was used in prepping, backing up, and restoring the SD card. That said, this process should work on any Raspberry Pi 2 v1.2 and above, and there are Windows/Linux tools to handle the SD card management.
+There are several guides written about this or similar setups, but in praactice there was always something missing or assumptions were made about certain steps in the process. This guide is meant to shed some light on those steps, simplify the process of getting setup, and explain my findings as figured things out on my own.
 
-## Install Raspbian
-N00BS on MicroSD card
-Boot into N00BS installer on Raspberry Pi
-Install Raspbian Lite (console only)
+This is what worked for me, your miles may vary.
 
-## Boot into Raspbian
-Login with user pi, password raspberry
-Change default user’s password with: `passwd`
-Run `sudo raspi-config` to get Configuration tool
-Enable SSH under Interfacing Options
-Restart Raspberry Pi (you should be prompted to do this, otherwise use `sudo reboot`)
+## Prerequisites
+While I won't have time to troubleshoot other setups, I'm sharing what I had to work with here. You'll need:
 
-## SSH into Raspberry Pi
-From your Mac’s Terminal: `ssh pi@IP_ADDRESS` where IP_ADDRESS is the IP or hostname of your Pi
-Type the new password you set for the pi user
-Note: If you get an error that says the host identification has changed, you’ll need to remove an old entry from your `Users/USERNAME/.ssh/known_hosts` file first, then try again
++ Raspberry Pi 3 Model B Plus Rev 1.3
++ Raspbian 10 Buster Lite
++ 16GB MicroSD card (4GB might be enough, but I'd stick with at least 8GB)
++ Mac running macOS Mojave (for prepping, backing up, and restoring the SD card)
++ USB SD card reader (I use this simple [Anker 2-in-1 card reader](https://amzn.to/2OaNBd1))
++ Mouse and keyboard for intial Raspberry Pi setup (I used a Bluetooth mouse that has its own USB transmitter, and my wife's [Apple Magic Keyboard connected via a USB to Lightning cable](https://www.reddit.com/r/mac/comments/6m3rpm/question_possible_to_use_magic_keyboard_2_without/))
++ HDMI cable and montior for initial Raspberry Pi setup (I hooked mine to a TV)
++ Apple Time Capsule router (connected directly to a cable modem, acting as a DHCP server)
 
-Optional: Change pi username
-Create a new user to login with, or try to replace pi user with new username
-https://askubuntu.com/a/34075
-You’ll need to `sudo su` into root to do this, most likely as another user, since you’ll need to kill all of pi’s processes
+That said, this process should work on any Raspberry Pi 2 v1.2 and above, and there are Windows/Linux tools to handle the SD card management.
+
+## Installing Raspbian on the Raspberry Pi
+There are many operating systems available to run on the Raspberry Pi, but we'll be using the latest version of Raspbian for this tutorial. There are also several different ways to install Rasbian on your Raspberry Pi, including N00Bs (New Out Of the Box Software). It's an easy operating system installer that allows you to erase your Raspberry Pi's SD card and start from scratch quickly, which is great when you're experimenting with your new device.
+
+You can [download N00BS](https://www.raspberrypi.org/downloads/noobs/) for free in either the normal version (includes Raspbian and LibreELEC installation files) or the lite version (nothing is pre-loaded, you'll download installation files from the internet). Once downloaded, follow [the simple instructions](https://projects.raspberrypi.org/en/projects/raspberry-pi-setting-up/3) to get an SD card ready for your Raspberry Pi.
+
+### Booting N00BS and Installing Raspbian
+Once the SD card is ready, insert it into your Raspberry Pi and boot it up. You'll be taken to the N00BS installer screen where you can choose to install any one of several operating systems, including Raspbian. You can choose from Lite (console only), Desktop (includes a GUI), or Full (Desktop and recommended applications).
+
+For the purposes of this setup, we'll install Raspbian Lite (console only). If you ever want to add the desktop GUI, you can [always add that later](https://gist.github.com/kmpm/8e535a12a45a32f6d36cf26c7c6cef51).
+
+Installation generally takes about 10 minutes, but depends on whether you chose Lite or the normal N00BS files and how fast your internet connection is. Once installed, your Raspberry Pi will reboot into the console of a fresh install of Raspbian.
+
+## Initial Setup of Raspbian
+To login to your freshly baked Raspberry Pi, use the default username/password pair of `pi` and `raspberry` (yes, very original). The first thing you should do is change your password:
+
+```
+passwd
+```
+
+Enter your current password (`raspberry`) and then type and retype a new password.
+
+### Optional: Change pi Username
+If you'd rather not stick with the default username of `pi`, changing your Raspbian username is unfortunately not as easy as you'd think. Because you're currently logged in as `pi` and you can't change the username of the current user, you have to get creative with how you go about this. You could create a new user, logout of the `pi` user, login as the new user, and then as root you can change the username of `pi` and its home directory. But now you have a second user.
+
+You can also follow along with [these instructions on adding a temporary user and using it to change pi's username](https://askubuntu.com/a/34075), but I can't vouch for this method as I skipped it altogether.
+
+### Prepping Raspbian for SSH
+We should enable SSH on the Raspberry Pi so that we can SSH into it from any device on the network, thus no longer needing the mouse, keyboard, HDMI cable, and screen. You'll need to know the IP address of your Raspberry Pi to continue.
+
+### Setting Up a Static IP Address
+First we need the IP address and MAC address of the Raspberry Pi. It's highly recommeneded that you setup a static IP address on your network for your Raspberry Pi so that you can easily SSH into it, and later, point other services directly to it.
+
+To get the current IP address of your Raspberry Pi, run:
+```
+ifconfig
+```
+And you'll see some output that should include both `eth0` details and `wlan0` details. The former is your ethernet (wired) network interface, while the latter is your wireless (wifi) network interface. Depending on how you'll be connecting your Raspberry Pi to your network, you'll need to focus on one or the other.
+
+If your Raspberry Pi is wired into your network via an ethernet cable, take a look at the `eth0` interface and find the following line:
+```
+inet 192.168.x.x  netmask 255.255.255.0  broadcast 192.168.x.255
+```
+Where `192.168.x.x` is the IP address of the Raspberry Pi (I've obfuscated this for privacy reasons). The Raspberry Pi's MAC address is just below that on the line:
+```
+ether ab:cd:ef:12:34:gh  txqueuelen 1000  (Ethernet)
+```
+Where `ab:cd:ef:12:34:gh` would be the unique MAC address of the `eth0` interface on this Raspberry Pi. In order to force your network's router to give the Raspberry Pi a static IP address (the same IP every time it connects), you'll need to edit the settings of your router and add a DHCP Reservation:
+```
+Description: Raspberry Pi
+Reserve Address By: MAC Address
+MAC Address: ab:cd:ef:12:34:gh
+IPv4 Address: 192.168.x.x
+```
+Once you've created a static IP address of your choosing (matching your router's existing subnet schema), save your changes and restart your router.
+
+### Enabling SSH on the Raspberry Pi
+Now we'll open the Raspberry Pi's Configuration Tool:
+```
+sudo raspi-config
+```
+Under the **Interfacing Options** group, go to **SSH** and enable it. You should be prompted to restart your Raspberry Pi. If you aren't, exit the Configuration Tool and type:
+```
+sudo reboot
+```
+## SSH into the Raspberry Pi
+Now that you've enabled SSH on the Raspberry Pi and given it a static IP address, you should be able to do all of the following setup from another device by connecting via SSH. I'll be using a Mac in the following steps.
+
+Open the macOS Terminal application and type:
+```
+ssh raspberrypi@192.168.x.x
+```
+Where `192.168.x.x` is the static IP address you just setup for your Raspberry Pi. Then type the new password you set for the `pi` user to login.
+
+**Note**: If you get an error that says the host identification has changed, you’ll need to remove the old entry (the one with the same static IP address) from your `~/.ssh/known_hosts` file first, then try again.
 
 ## Setup SSH Keys
 On your computer (Mac in this case), open Terminal
