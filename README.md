@@ -235,7 +235,7 @@ To make sure Pi-Hole is working, you can set a single device to use it as its DN
 
 Restart your router and watch as the Pi-Hole Dashboard (now available on your internal network at http://pi.hole/admin) fills up with blocked queries!
 
-## Install Unbound DNS
+## Setup Unbound as Your DNS Service
 [Unbound](https://www.nlnetlabs.nl/projects/unbound/about/) is a validating, recursive, caching DNS resolver. It is designed to be fast and lean and incorporates modern features based on open standards.
 
 Install Unbound: `sudo apt install unbound`
@@ -293,17 +293,22 @@ And this command should return a status of NOERROR:
 dig sigok.verteiltesysteme.net @127.0.0.1 -p 5353
 ```
 
-## Allow Pi-Hole to Use Unbound DNS
-Open the Pi-Hole Web Interface using a web browser: http://pi.hole/admin
-Go to Settings > DNS
-Uncheck any third party Upstream DNS Servers you had selected during setup
-Add `127.0.0.1#5353` to the Custom 1 (IPv4) Upstream DNS Servers input
-Uncheck “Never forward non-FQDNs” and “Never forward reverse lookups for private IP ranges”
-Check “Use Conditional Forwarding” and enter your router’s IP address, along with the Domain Name (this can be set on your router, usually under the DHCP settings, to something like “home”)
-Don’t check “Use DNSSEC” as Pi-Hole uses Unbound DNS, which already enables DNSSEC
-Save your settings
+### Allow Pi-Hole to Use Unbound DNS
+Now that your Unbound recursive DNS resolver is running locally, we'll force Pi-Hole to use it for DNS rather than an outside source like Google (8.8.8.8) or Cloudflare (1.1.1.1) and keep all of our network traffic contained. Any traffic on your network will be sent to Pi-Hole, which in turn will use Unbound for DNS resolution before blocking the appropriate domains and returning data.
 
-Check to make sure DNSSEC (DNS Security Extensions) is working by visiting: http://dnssec.vs.uni-due.de
+First, open the Pi-Hole Web Interface in a web browser on your local network: http://pi.hole/admin
+
+Then go to **Settings > DNS** and uncheck any third party Upstream DNS Servers you had selected during setup. To the Custom 1 (IPv4) Upstream DNS Servers input, add:
+```
+127.0.0.1#5353
+```
+Where `127.0.0.1` points the Pi-Hole server (the Raspberry Pi) to itself on port `5353`. If you changed the port in your Unbound configuration file, use that port here instead.
+
+Next, uncheck **Never forward non-FQDNs** and **Never forward reverse lookups for private IP ranges** and check **Use Conditional Forwarding** and enter your router’s IP address (typically something like `x.x.x.1` on your subnet), along with the Domain Name (this can be set on your router, usually under the DHCP settings, to something like `home`).
+
+Lastly, *do not* check **Use DNSSEC** as Pi-Hole is going to be using your Unbound DNS, which already enables DNSSEC (Domain Name System Security Extensions).
+
+When you're done, don't forget to save your settings. To check and make sure DNSSEC is working, visit this URL in your browser within your network: http://dnssec.vs.uni-due.de
 
 ## Setting Up Your VPN with WireGuard
 Install necessary packages for everything we’ll be doing:
