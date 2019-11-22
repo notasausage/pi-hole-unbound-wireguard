@@ -299,6 +299,13 @@ cache-min-ttl: 3600
 cache-max-ttl: 86400
 ```
 You can adjust the cache settings if you like. Instead of the default of not caching, here we set the minimum TTL (Time To Live) to 1 hour, afterwards the DNS will do another lookup of the cached data.
+```
+# Create DNS record for Pi-Hole Web Interface
+private-domain: "pi.hole"
+local-zone: "pi.hole" static
+local-data: "pi.hole IN A 192.168.x.x"
+```
+When Pi-Hole was doing DNS, it created this custom record for http://pi.hole so we could easily reach the Web Interface without typing in the static IP address of the Raspberry Pi. Now that Unbound is our DNS, we'll need to create this custom record in the Unbound configuration file. Be sure to replace `192.168.x.x` with the static IP address of your Raspberry Pi.
 
 Once the configuration file is saved, start the Unbound DNS server:
 ```
