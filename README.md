@@ -94,8 +94,8 @@ Where `pi` is the username on your Raspberry Pi and `192.168.x.x` is the static 
 
 **Note**: If you get an error that says the host identification has changed, you’ll need to remove the old entry (the one with the same static IP address) from your `~/.ssh/known_hosts` file first, then try again.
 
-##### Generate Client SSH Keys
-In your Mac's Terminal app, generate SSH key pairs with:
+##### Passwordless SSH Access
+It's possible to [configure the Raspberry Pi to allow a computer to access it without providing a password each time](https://www.raspberrypi.org/documentation/remote-access/ssh/passwordless.md) you try to connect. In your Mac's Terminal app, generate SSH key pairs with:
 ```
 ssh-keygen -t rsa -b 4096
 ```
@@ -236,6 +236,8 @@ To make sure Pi-Hole is working, you can set a single device to use it as its DN
 Restart your router and watch as the Pi-Hole Dashboard (now available on your internal network at http://pi.hole/admin) fills up with blocked queries!
 
 ## Install Unbound DNS
+[Unbound](https://www.nlnetlabs.nl/projects/unbound/about/) is a validating, recursive, caching DNS resolver. It is designed to be fast and lean and incorporates modern features based on open standards.
+
 Install Unbound: `sudo apt install unbound`
 Get the root.hints file: `wget -O root.hints https://www.internic.net/domain/named.root`
 Move the root.hints file to the Unbound directory: `sudo mv root.hints /var/lib/unbound/`
