@@ -1,4 +1,4 @@
-# Raspberry Pi: Pi-Hole Ad-Blocking + Unbound DNS + Wireguard VPN
+# Raspberry Pi: Pi-Hole Ad-Blocking + Unbound DNS + WireGuard VPN
 This project is centered around getting a Raspberry Pi setup on a simple home network in order to block ads and naughty DNS requests, secure the DNS requests of all devices on the network, and provide a VPN solution for when any of these devices are outside of the network and would like to take advantage of the security (and speed) benefits of the network remotely.
 
 There are several guides written about this or similar setups, but in praactice there was always something missing or assumptions were made about certain steps in the process. This guide is meant to shed some light on those steps, simplify the process of getting setup, and explain my findings in order to help anyone else trying to do the same.
@@ -579,7 +579,7 @@ On your Raspberry Pi, there are a few more steps needed to complete setup of the
 ```
 sudo systemctl enable wg-quick@wg0
 ```
-Set the correct permissions on the Wireguard configuration file with:
+Set the correct permissions on the WireGuard configuration file with:
 ```
 sudo chown -R root:root /etc/wireguard/
 sudo chmod -R og-rwx /etc/wireguard/
@@ -625,7 +625,7 @@ Once you've added this port forwarding on your network's router, restart the dev
 ## References
 There are several write-ups out there on how to do this, as well as install scripts to do it for you. Since the Raspberry Pi was meant to be a learning tool, I used this opportunity to figure things out on my own with the help of documentation from both software creators and the community. If it weren't for the latter, I doubt I would've been able to do this on my own. Thanks to everyone who has taken the time to share their knowledge, and experience, in setting up a Raspberry Pi.
 
-**Build Your Own Wireguard VPN Server with Pi-Hole for DNS Level Ad Blocking**  
+**Build Your Own WireGuard VPN Server with Pi-Hole for DNS Level Ad Blocking**  
 https://www.sethenoka.com/build-your-own-wireguard-vpn-server-with-pi-hole-for-dns-level-ad-blocking/  
 Seth Enoka's write-up includes some additional firewall setup with IPtables, which I skipped. But this is an excellent reference for what we're doing, even though he uses a VPS with Ubuntu rather than a Raspberry Pi.
 
