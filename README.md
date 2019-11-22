@@ -231,6 +231,160 @@ Save your settings
 
 Check to make sure DNSSEC (DNS Security Extensions) is working by visiting: http://dnssec.vs.uni-due.de
 
+## Setting Up Your VPN with WireGuard
+Install necessary packages for everything we’ll be doing:
+`sudo apt install raspberrypi-kernel-headers libelf-dev libmnl-dev build-essential git`
+
+Switch to root with`sudo su` and enter the next 2 commands per the Debian installation commands from: https://www.wireguard.com/install/
+Run `echo "deb http://deb.debian.org/debian/ unstable main" > /etc/apt/sources.list.d/unstable.list`
+Then `printf 'Package: *\nPin: release a=unstable\nPin-Priority: 90\n' > /etc/apt/preferences.d/limit-unstable`
+Then exit root with: `exit`
+
+Update everything with `sudo apt update` and ignore the error
+Install dirmngr for handling certificates: `sudo apt install dirmngr`
+
+Add pubic keys
+`sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7638D0442B90D010`
+`sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 04EE7237B7D453EC`
+
+### Update and Install WireGuard
+Run `sudo apt update` and then `sudo apt install wireguard`
+Enable IP forwarding with: `sudo perl -pi -e 's/#{1,}?net.ipv4.ip_forward ?= ?(0|1)/net.ipv4.ip_forward = 1/g' /etc/sysctl.conf`
+Reboot your Raspberry Pi with `sudo reboot`
+After reboot, verify that IP forwarding is enabled by running: `sysctl net.ipv4.ip_forward`
+You should see `net.ipv4.ip_forward = 1` as a result, otherwise add the above command to your `/etc/sysctl.conf` file
+
+### Generate Private & Public Keys for Wireguard
+Become root with `sudo su`
+Change to Wireguard directory: `cd /etc/wireguard`
+Set permissions on directory: `umask 077`
+Generate the server’s private & public keys: `wg genkey | tee server_privatekey | wg pubkey > server_publickey`
+Generate a client’s private & public keys: `wg genkey | tee peer1_privatekey | wg pubkey > peer1_publickey`
+Confirm the keys were generated and permissioned: `ls -la`
+View and save keys for Wireguard configuration:
+`cat server_privatekey`
+`cat peer1_publickey`
+Exit root: `exit`
+
+### Configure Wireguard Server
+Create and edit the configuration file: `sudo nano /etc/wireguard/wg0.conf`
+Be sure to replace `<server_privatekey>` and `<peer1_publickey>` with the keys you generated earlier
+And replace `192.168.x.x` with the IP of your Pi-Hole (in this case it’s the Raspberry Pi you’re already on)
+```
+[Interface]
+Address = 10.9.0.1/24
+# Default Wireguard port, change to anything that doesn’t conflict
+ListenPort = 51820
+DNS = 192.168.x.x
+PrivateKey = <server_privatekey>
+
+# Replace eth0 with the interface open to the internet (e.g might be wlan0 if wifi)
+PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+
+[Peer]
+# Peer 1
+PublicKey = <peer1_publickey>
+AllowedIPs = 10.9.0.2/32
+# If this device is behind a NAT, uncomment to keep connection alive
+#PersistentkeepAlive = 60 
+```
+
+### Configure a Wireguard Client
+Create and edit a client configuration file: `sudo nano /etc/wireguard/peer1.conf`
+Be sure to replace `<peer1_privatekey>` and `<server_publickey>` with the keys you generated earlier
+And replace `192.168.x.x` with the IP of your Pi-Hole (in this case it’s the Raspberry Pi you’re already on)
+```
+[Interface]
+Address = 10.9.0.2/32
+DNS = 192.168.x.x 
+PrivateKey = <peer1_privatekey>
+
+[Peer]
+PublicKey = <server_publickey>
+Endpoint = YOUR-PUBLIC-IP/DDNS:ListenPort
+# For full tunnel use 0.0.0.0/0, ::/0 and for split tunnel use 192.168.1.0/24
+# or whatever your router’s subnet is
+AllowedIPs = 0.0.0.0/0, ::/0
+# If this device is behind a NAT, uncomment to keep connection alive
+#PersistentkeepAlive = 60 
+```
+
+### Optional: Setup Dynamic DNS for Your Public IP address
+If your ISP does not provide you with a static IP address (most don’t), and your IP changes for some reason (cable modem reboot, connectivity issues, etc.), your home network may be unreachable from the outside until you update it in your configuration files.  The solution is to use a DDNS (Dynamic DNS) service where you choose a readable domain name and can automatically notify when your public IP address changes.
+
+So instead of worry about whether your public IP address is 98.10.200.11 or 98.10.200.42, you can instead point a domain name like `username.us.to` at your public IP address and have the DDNS service update the domain record when your public IP address changes.
+
+There are plenty of DDNS services out there, but I’m using Afraid.org’s Free DNS service because it doesn’t nag you to login every 30 days, even on the completely free plan.
+
+#### Get a Free DNS Subdomain
+Create a free account at: http://freedns.afraid.org
+Verify your account using the link you’ll receive in your email
+Go to Add Subdomain
+Enter a Subdomain (like a username, your name, etc.) and choose a Domain (there are many to choose from besides what’s listed)
+Leave Type set to an A record, TTL is set to 3600 for free accounts, and Wildcard functionality is only for paid accounts
+Your public IP address should be automatically filled in, but you can visit http://www.ipleak.com in a browser to get your IP address
+Enter the CAPTCHA text and hit Save
+You should now have a shiny new subdomain pointing to your network’s public IP address
+
+#### Automatically Update Your Public IP Address
+While logged in at Afraid.org, go to the Dynamic DNS page and look for your new subdomain record
+Right click the Direct URL link associated with your subdomain record and Copy Link
+On your Raspberry Pi, create a cronjob that runs every 5 minutes (replacing the XXXXX with the unique identifier in your Direct URL):
+`crontab -l | { cat; echo "*/5 * * * * curl http://freedns.afraid.org/dynamic/update.php?XXXXX”; } | crontab -`
+You’ll see `no crontab for …` on the console, you can safely ignore that
+Verify that you’ve added the command correctly with: `crontab -l`
+Restart the cron service with: `sudo service cron restart`
+
+#### Use Your Dynamic Subdomain in Place of Your Public IP address
+Go back to your Wireguard configuration file and use your new subdomain with the `ListenPort` you set earlier and never worry about your public IP address changing!
+In the `/etc/wireguard/peer1.conf` file, edit this line:
+`Endpoint = YOUR-PUBLIC-IP/DDNS:ListenPort`
+to read:
+`Endpoint = username.us.to:51820`
+using the subdomain you chose at Afraid.org and the `ListenPort` you set in your `/etc/wireguard/wg0.conf` file
+
+### Setting Up Your Phone to Use the VPN
+Unlike IPSec or IKEv2, WireGuard isn’t built into the Android or iOS operating system, so you’ll have to download the WireGuard app to connect to your new VPN.
+
+Find and install the iOS or Android native app for WireGuard
+Android: https://play.google.com/store/apps/details?id=com.wireguard.android&hl=en_US
+iOS: https://apps.apple.com/us/app/wireguard/id1441195209
+
+#### Export Your Client Configuration with a QR Code
+Install the QR encoder with: `sudo apt install qrencode`
+Become the root user in order to read the WireGuard client config: `sudo su`
+Create a QR code from your client configuration: `qrencode -t ansiutf8 < /etc/wireguard/peer1.conf`
+Note: You may have to adjust the size of your Terminal window to properly show the QR code generated
+Open the WireGuard app on your phone, tap “Add a tunnel” and select “Create from QR code”
+Scan the QR code with your phone’s camera, give the tunnel a name, and allow WireGuard to add VPN configurations to the OS
+
+### Finish WireGuard Installation
+On your Raspberry Pi, complete setup of WireGuard
+Allow WireGuard to start on boot: `sudo systemctl enable wg-quick@wg0`
+Set the correct permissions on the Wireguard configuration file with:
+`sudo chown -R root:root /etc/wireguard/`
+`sudo chmod -R og-rwx /etc/wireguard/`
+
+In your Pi-Hole Web Interface, go to Settings > DNS and choose the “Listen on all interfaces, permit all origins” option under “Interface listening behavior”
+Save your settings
+
+Run `sudo wg-quick up wg0` to Start Wireguard
+Check to see if interface was created successfully: `ifconfig wg0`
+
+Restart your Raspberry Pi with: `sudo reboot`
+Use `sudo wg` to check if WireGuard working (You should see interface wg0 and a peer)
+
+### Open WireGuard VPN Port on Your Router
+If you have an Apple Time Capsule or AirPort device, open the AirPort Utility in macOS
+Edit the settings for your device, and go to Network
+Under Port Settings, click the + icon to add a new port forward Give the port forward a name (example: “WireGuard VPN”)
+Enter 51820 (or whatever you set your `ListenPort` to) in the Public/Private UDP Ports and Public/Private TCP Ports fields
+Enter the static IP address of your Raspberry Pi in the Private IP Address field
+
+### Setup VPN Client for Mac
+https://itunes.apple.com/us/app/wireguard/id1451685025
+
 ## References
 
 There are several write-ups out there on how to do this, as well as install scripts to do it for you. Since the Raspberry Pi was meant to be a learning tool, I used this opportunity to figure things out on my own with the help of documentation from both software creators and the community. If it weren't for the latter, I doubt I would've been able to do this on my own.
