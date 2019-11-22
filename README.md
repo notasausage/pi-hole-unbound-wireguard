@@ -289,9 +289,9 @@ This points to the `root.hints` file you just downloaded.
 # IPs authorized to access the DNS Server
 access-control: 0.0.0.0/0 refuse
 access-control: 127.0.0.1 allow
-access-control: 192.168.1.0/24 allow
+access-control: 192.168.x.0/24 allow
 ```
-Here we're refusing connections to all interfaces and then we're allowing anything from this device (your Raspberry Pi) and anything from our local subnet (if your subnet is not `192.168.1.x` then you'll need to change this).
+Here we're refusing connections to all interfaces and then we're allowing anything from this device (your Raspberry Pi) and anything from our local subnet (be sure to change `192.168.x.0` to whatever your local subnet is).
 ```
 # Time To Live (in seconds) for DNS cache. Set cache-min-ttl to 0 remove caching (default).
 # Max cache default is 86400 (1 day).
