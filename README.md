@@ -1,7 +1,7 @@
 # Raspberry Pi: Pi-Hole Ad-Blocking + Unbound DNS + Wireguard VPN
 This project is centered around getting a Raspberry Pi setup on a simple home network in order to block ads and naughty DNS requests, secure the DNS requests of all devices on the network, and provide a VPN solution for when any of these devices are outside of the network and would like to take advantage of the security (and speed) benefits of the network remotely.
 
-There are several guides written about this or similar setups, but in praactice there was always something missing or assumptions were made about certain steps in the process. This guide is meant to shed some light on those steps, simplify the process of getting setup, and explain my findings as figured things out on my own.
+There are several guides written about this or similar setups, but in praactice there was always something missing or assumptions were made about certain steps in the process. This guide is meant to shed some light on those steps, simplify the process of getting setup, and explain my findings in order to help anyone else trying to do the same.
 
 This is what worked for me, your miles may vary.
 
@@ -204,37 +204,43 @@ where `/dev/disk2` is the path to your SD card’s disk and `~/RaspberryPiBackup
 
 **Note**: If you backed up the SD card as a .CDR, you can rename it to .ISO and restore it to any SD card with the free [Etcher application](https://www.balena.io/etcher/) for macOS.
 
-## Installing Pi-Hole
-Run the Pi-Hole installer: `sudo curl -sSL https://install.pi-hole.net | bash`
-Note: If you see an error “Script called with non-root privileges” you can download the install script and run it as root instead
-Get the Pi-Hole install script: `wget -O basic-install.sh https://install.pi-hole.net`
-Run the installer as root: `sudo bash basic-install.sh`
-Select OK for the first few screens, then select `eth0` for ethernet or `wlan0` for wireless on the Choose An Interface screen
-Select any Upstream DNS Provider since we’ll be using our own Unbound server later (I choose Cloudflare here)
-Choose any Block Lists you want to use
-Choose both IPv4 and IPv6 on the Select Protocols screen
-Use the current network settings on the next screen, assuming you gave your Raspberry Pi a static IP address
-Decide if you want to install the web admin interface (and then install lighthttpd to serve it)
-Log queries? What privacy mode do you want for FTL?
-Setup will finish, DNS service will be running
+## Setting Up Pi-Hole
+[Pi-Hole](https://pi-hole.net) provides ad-blocking at the network level, meaning you not only stop ads from making it to any of the devices on your network, but you also block the unnecessary network requests for those ads and thus reduce bandwidth usage. Pi-Hole pairs nicely with a VPN (Virtual Private Network) so that you can connect remotely and still take advantage of ad-blocking from anywhere outside your network.
 
-## Using Pi-Hole’s Web Interface
-After Pi-Hole setup is complete, change the default Web Interface password with `pihole -a -p`
-Access the Pi-Hole Web Interface in your browser by going to http://IP_ADDRESS/admin where IP_ADDRESS is the static IP of your Raspberry Pi (you can also use htt://pi.hole/admin once you point your router to use Pi-Hole as your DNS service)
-Go to Login, then enter the new password you set for the Web Interface and check the “Remember me for 7 days” checkbox before logging in
-You won’t see much on the Dashboard yet since nothing on your network is using Pi-Hole
+First you'll need to run the Pi-Hole installer:
+```
+sudo curl -sSL https://install.pi-hole.net | bash
+```
+**Note**: If you see the error “Script called with non-root privileges” during setup, you can download the install script and run it as root instead. Do this by downloading the script:
+```
+wget -O basic-install.sh https://install.pi-hole.net
+```
+and then run the installer as root:
+```
+sudo bash basic-install.sh
+```
+During setup, select **OK** for the first few screens, then select either `eth0` for ethernet (wired) or `wlan0` for wireless (wifi) on the **Choose An Interface** screen. Next, select any **Upstream DNS Provider** since we’ll be using our own Unbound server later. Choose any **Block Lists** you want to use, or leave them all checked by default. Choose both IPv4 and IPv6 on the **Select Protocols** screen. Use the current network settings on the next screen, assuming you gave your Raspberry Pi a static IP address earlier. Then decide if you want to install the Web Interface for Pi-Hole (and `lighthttpd` to serve it), which you'll typically want to keep an eye on your traffic and blocked queries (and to make additional configuration changes) in a web browser.
 
-## Point Your Router to Pi-Hole
-To make sure Pi-Hole is working, you can set a single device to use it as your DNS service or use your network’s router instead to force (almost) every device on your network to use Pi-Hole
-Most routers have a setting for Primary and Secondary DNS, point the primary to the static IP address of your Raspberry Pi and the secondary to something like Google (8.8.8.8) or Cloudflare (1.1.1.1) in case your Pi-Hole server goes down for some reason and you don’t want to lose all connectivity to the outside world
-Restart your router, and watch as the Pi-Hole Dashboard (now available at http://pi.hole/admin) fills up with blocked queries!
+Lastly, decide how you want to log queries and what privacy mode do you want for FTL (Faster Than Light). Setup will finish, and the Pi-Hole DNS service will be running.
+
+### Using Pi-Hole’s Web Interface
+After Pi-Hole setup is complete, you should see the default Web Interface password on the console. You can change the  password using:
+```
+pihole -a -p
+```
+Now you can access the Pi-Hole Web Interface in your browser by going to `http://192.168.x.x/admin` where `192.168.x.x` is the static IP of your Raspberry Pi (you can also use http://pi.hole/admin once you point your router to use Pi-Hole as your DNS service in the next step). Go to Login, then enter the new password you set for the Web Interface and check the “Remember me for 7 days” checkbox before logging in. You won’t see much on the Dashboard yet since nothing on your network is using Pi-Hole, but that should change momentarily.
+
+### Use Pi-Hole as Your DNS Server
+To make sure Pi-Hole is working, you can set a single device to use it as its DNS service or you can point your network’s router to it instead to force (almost) every device on your network to use Pi-Hole as its DNS service. Most routers have a setting for Primary and Secondary DNS, and you'll want to point the Primary DNS Server to the static IP address of your Raspberry Pi (`192.168.x.x`) and the Secondary DNS Server to a 3rd party DNS service like Google (8.8.8.8) or Cloudflare (1.1.1.1) in case your Pi-Hole server goes down for some reason and you don’t want to lose all connectivity to the outside world (like when you're fiddling around with your Raspberry Pi in the upcoming steps).
+
+Restart your router and watch as the Pi-Hole Dashboard (now available on your internal network at http://pi.hole/admin) fills up with blocked queries!
 
 ## Install Unbound DNS
 Install Unbound: `sudo apt install unbound`
 Get the root.hints file: `wget -O root.hints https://www.internic.net/domain/named.root`
 Move the root.hints file to the Unbound directory: `sudo mv root.hints /var/lib/unbound/`
 
-## Configure Unbound DNS
+### Configure Unbound DNS
 Edit the Pi-Hole configuration file: `sudo nano /etc/unbound/unbound.conf.d/pi-hole.conf`
 See documentation for all options: https://www.nlnetlabs.nl/documentation/unbound/unbound.conf/
 
