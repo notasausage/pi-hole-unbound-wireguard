@@ -243,108 +243,55 @@ Get the root.hints file: `wget -O root.hints https://www.internic.net/domain/nam
 Move the root.hints file to the Unbound directory: `sudo mv root.hints /var/lib/unbound/`
 
 ### Configure Unbound DNS
-Edit the Pi-Hole configuration file: `sudo nano /etc/unbound/unbound.conf.d/pi-hole.conf`
-See documentation for all options: https://www.nlnetlabs.nl/documentation/unbound/unbound.conf/
+Unbound includes a lot of different configuration options that you can adjust and try out. Feel free to scan the [Unbound configuration file documentation](https://www.nlnetlabs.nl/documentation/unbound/unbound.conf/) for details about each option.
 
+To get started, edit the Pi-Hole configuration file:
 ```
-server:
-# If no logfile is specified, syslog is used
-# logfile: "/var/log/unbound/unbound.log"
+sudo nano /etc/unbound/unbound.conf.d/pi-hole.conf
+```
+and remove anything already in the file before copying and pasting the contents of the [sample pi-hole.conf](pi-hole.conf) configuration file in this repository. When you're done, exit and save the file.
 
-# Level 2 gives detailed operational information
-verbosity: 2
-
+Some things to note:
+```
 port: 5353
-do-ip4: yes
-do-udp: yes
-do-tcp: yes
-
-# May be set to yes if you have IPv6 connectivity
-do-ip6: no
-
+```
+The default port for Unbound is `53` but we're changing it to `5353` here. Feel free to change it to whatever you like, but you'll need to remember it later when we tell Pi-Hole where to send upstream DNS requests.
+```
 # Use this only when you downloaded the list of primary root servers!
 root-hints: "/var/lib/unbound/root.hints"
-
-# Respond to DNS requests on all interfaces
-interface: 0.0.0.0
-# Maximum  UDP response size, default is 4096
-max-udp-size: 3072
-
+```
+This points to the `root.hints` file you just downloaded.
+```
 # IPs authorized to access the DNS Server
 access-control: 0.0.0.0/0 refuse
 access-control: 127.0.0.1 allow
 access-control: 192.168.1.0/24 allow
-
-# Hide DNS Server info
-hide-identity: yes
-hide-version: yes
-
-# Trust glue only if it is within the servers authority
-harden-glue: yes
-
-# Require DNSSEC data for trust-anchored zones, if such data is absent, the zone becomes BOGUS
-harden-dnssec-stripped: yes
-
-# Burdens the authority servers, not RFC standard, and could lead to performance problems
-harden-referral-path: no
-
-# Add an unwanted reply threshold to clean the cache and avoid, when possible, DNS poisoning
-unwanted-reply-threshold: 10000000
-
-# Don't use Capitalization randomization as it known to cause DNSSEC issues sometimes
-# see https://discourse.pi-hole.net/t/unbound-stubby-or-dnscrypt-proxy/9378 for further details
-use-caps-for-id: no
-
-# Reduce EDNS reassembly buffer size.
-# Suggested by the unbound man page to reduce fragmentation reassembly problems
-edns-buffer-size: 1472
-
-# Perform prefetching of close to expired message cache entries
-# This only applies to domains that have been frequently queried
-prefetch: yes
-# Fetch the DNSKEYs earlier in the validation process, which lowers the latency of requests
-# but also uses a little more CPU
-prefetch-key: yes
-
+```
+Here we're refusing connections to all interfaces and then we're allowing anything from this device (your Raspberry Pi) and anything from our local subnet (if your subnet is not `192.168.1.x` then you'll need to change this).
+```
 # Time To Live (in seconds) for DNS cache. Set cache-min-ttl to 0 remove caching (default).
 # Max cache default is 86400 (1 day).
 cache-min-ttl: 3600
 cache-max-ttl: 86400
-
-# If enabled, attempt to serve old responses from cache without waiting for the actual
-# resolution to finish.
-# serve-expired: yes
-# serve-expired-ttl: 3600
-
-# Use about 2x more for rrset cache, total memory use is about 2-2.5x
-# total cache size. Current setting is way overkill for a small network.
-# Judging from my used cache size you can get away with 8/16 and still
-# have lots of room, but I've got the ram and I'm not using it on anything else.
-# Default is 4m/4m
-msg-cache-size: 128m
-rrset-cache-size: 256m
-
-# One thread should be sufficient, can be increased on beefy machines.
-# In reality for most users running on small networks or on a single machine it should
-# be unnecessary to seek performance enhancement by increasing num-threads above 1.
-num-threads: 1
-
-# Ensure kernel buffer is large enough to not lose messages in traffic spikes
-so-rcvbuf: 1m
-
-# Ensure privacy of local IP ranges
-private-address: 192.168.0.0/16
-private-address: 169.254.0.0/16
-private-address: 172.16.0.0/12
-private-address: 10.0.0.0/8
-private-address: fd00::/8
-private-address: fe80::/10
 ```
+You can adjust the cache settings if you like. Instead of the default of not caching, here we set the minimum TTL (Time To Live) to 1 hour, afterwards the DNS will do another lookup of the cached data.
 
-Start the Unbound DNS server: `sudo service unbound start`
-Test that Unbound DNS is running: `dig pi-hole.net @127.0.0.1 -p 5353`
-This command should return a status of SERVFAIL: `dig sigfail.verteiltesysteme.net @127.0.0.1 -p 5353`
-This command should return a status of NOERROR: `dig sigok.verteiltesysteme.net @127.0.0.1 -p 5353`
+Once the configuration file is saved, start the Unbound DNS server:
+```
+sudo service unbound start
+```
+And test to make sure the Unbound DNS is running:
+```
+dig pi-hole.net @127.0.0.1 -p 5353
+```
+If you run this command, it should return a status of SERVFAIL:
+```
+dig sigfail.verteiltesysteme.net @127.0.0.1 -p 5353
+```
+And this command should return a status of NOERROR:
+```
+dig sigok.verteiltesysteme.net @127.0.0.1 -p 5353
+```
 
 ## Allow Pi-Hole to Use Unbound DNS
 Open the Pi-Hole Web Interface using a web browser: http://pi.hole/admin
