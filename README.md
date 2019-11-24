@@ -614,18 +614,16 @@ You should see interface `wg0` and a peer.
 ### Open WireGuard VPN Port on Your Router
 Without this step, you will not be able to reach your VPN from outside of the network. None of the write-ups I found mentioned this step, most likely assuming you would already know to do this (I didn't).
 
-In order to reach your VPN from outside your network, you'll have to setup a port forward on your network's router that passes traffic on that port to an internal IP address of your choosing. Generally speaking, this might look like:
+In order to reach your VPN from outside your network, you'll have to setup a **UDP-specific port forward** on your network's router that passes traffic on that port to an internal IP address of your choosing. Generally speaking, this might look like:
 ```
 Description: WireGuard VPN
 Public UDP Ports: 51820
-Public TCP Ports: 51820
 Private IP Address: 192.168.x.x
 Private UDP Ports: 51820
-Private TCP Ports: 51820
 ```
 Where `192.168.x.x` is the internal static IP address of the Raspberry Pi running WireGuard, and `51820` is whatever you set the `ListenPort` to in your `/etc/wireguard/wg0.conf` file. Each router has different settings available, but the above are from my Apple Time Capsule's AirPort Utility in macOS.
 
-**Note**: I'm passing through both TCP & UDP traffic on this port, which I assume is correct. That said, I'm not a network technician, so this may not be best practice.
+**Note**: I'm passing just UDP traffic on this port, as WireGuard uses UDP and not TCP.
 
 Once you've added this port forwarding on your network's router, restart the device and now you should be able to connect to your WireGuard VPN from outside your network and enjoy the benefits of network-level ad-blocking from anywhere, at any time!
 
