@@ -24,10 +24,14 @@ That said, this process should work on any Raspberry Pi 2 v1.2 and above, and th
 ## Installing Raspbian on the Raspberry Pi
 There are many operating systems available to run on the Raspberry Pi, but we'll be using the latest version of Raspbian for this tutorial. There are also several different ways to install Rasbian on your Raspberry Pi, including N00Bs (New Out Of the Box Software). It's an easy operating system installer that allows you to erase your Raspberry Pi's SD card and start from scratch quickly, which is great when you're experimenting with your new device.
 
+![Download N00BS](screenshots/n00bs-download.png)
+
 You can [download N00BS](https://www.raspberrypi.org/downloads/noobs/) for free in either the normal version (includes Raspbian and LibreELEC installation files) or the lite version (nothing is pre-loaded, you'll download installation files from the internet). Once downloaded, follow [the simple instructions](https://projects.raspberrypi.org/en/projects/raspberry-pi-setting-up/3) to get an SD card ready for your Raspberry Pi.
 
 ### Booting N00BS and Installing Raspbian
 Once the SD card is ready, insert it into your Raspberry Pi and boot it up. You'll be taken to the N00BS installer screen where you can choose to install any one of several operating systems, including Raspbian. You can choose from Lite (console only), Desktop (includes a GUI), or Full (Desktop and recommended applications).
+
+![N00BS v2.2](screenshots/n00bs-setup.png)
 
 For the purposes of this setup, we'll install Raspbian Lite (console only). If you ever want to add the desktop GUI, you can [always add that later](https://gist.github.com/kmpm/8e535a12a45a32f6d36cf26c7c6cef51).
 
@@ -81,7 +85,10 @@ Now we'll open the Raspberry Pi's Configuration Tool:
 ```
 sudo raspi-config
 ```
-Under the **Interfacing Options** group, go to **SSH** and enable it. You should be prompted to restart your Raspberry Pi. If you aren't, exit the Configuration Tool and type:
+![Raspberry Pi Software Configuration Tool](screenshots/raspbian-configuration-tool.png)
+Under the **Interfacing Options** group, go to **SSH** and enable it.
+![Raspberry Pi Software Configuration Tool](screenshots/raspbian-enable-ssh.png)
+You should be prompted to restart your Raspberry Pi. If you aren't, exit the Configuration Tool and type:
 ```
 sudo reboot
 ```
@@ -127,6 +134,7 @@ Here are some additional steps I prefer to take upon setting up my Raspberry Pi.
 ```
 sudo raspi-config
 ```
+![Raspberry Pi Localisation Options](screenshots/raspbian-localisation-options.png)
 + Under **Network Options**, change the **Hostname** to something other than `raspberrypi` (most of the devices on my network are [named after Transformers](https://tfwiki.net/wiki/The_Transformers_(toyline))).
 + Under **Localisation Options**, add to the **Locale** `en-us UTF8` and select it as the default locale (*do not* remove the default `en-gb UTF8` as it seems to cause issues)
 + Under **Localisation Options**, change the timezone to match yours
@@ -154,7 +162,7 @@ Throughout the process of setting things up, you may want to have a backup of yo
 
 ### Backup the Raspberry Pi SD Card
 There are many ways to do this, but if you're on a Mac there is a very simple (and free) solution. You'll want to download the [ApplePi-Baker](https://www.tweaking4all.com/hardware/raspberry-pi/applepi-baker-v2/) app for macOS, which handles backing up your Raspberry Pi's SD card and can restore from several different formats as well.
-
+![ApplePi-Baker macOS App](screenshots/applepi-baker.png)
 At any point you want to backup your Raspberry Pi's configuration, first shutdown the device with:
 ```
 sudo halt
@@ -166,7 +174,7 @@ sudo shutdown -h now
 and then unplug your Rasbperry Pi (or get a [Pi Switch](https://amzn.to/2s7axRP) to make life easier). Remove the SD card from the Raspberry Pi and insert into a supported SD card reader (like the [Anker 2-in-1 card reader](https://amzn.to/2OaNBd1) I mentioned earlier), and connect to your Mac.
 
 When you open the ApplePi-Baker app, you should be able to select the SD card from the **Select a Disk** options (make sure you select the right disk), then choose the **Backup** option. In the file choose window, select **IMG** from the Format selections at the bottom of the window, and then give the backup file a name. This should take some time, be prepared to wait.
-
+![ApplePi-Baker Backup Process](screenshots/applepi-baker-backup-process.png)
 **Note**: The IMG format allows ApplePi-Baker to shrink the Linux partition on backup and expand it on restore, saving you from having to backup the entire size of the SD card rather than just the actual contents.
 
 #### Using the macOS Terminal
@@ -215,7 +223,7 @@ where `/dev/disk2` is the path to your SD card’s disk and `~/RaspberryPiBackup
 
 ## Setting Up Pi-Hole
 [Pi-Hole](https://pi-hole.net) provides ad-blocking at the network level, meaning you not only stop ads from making it to any of the devices on your network, but you also block the unnecessary network requests for those ads and thus reduce bandwidth usage. Pi-Hole pairs nicely with a VPN (Virtual Private Network) so that you can connect remotely and still take advantage of ad-blocking from anywhere outside your network.
-
+![Pi-Hole Dashboard](screenshots/pi-hole-dashboard.png)
 First you'll need to run the Pi-Hole installer:
 ```
 sudo curl -sSL https://install.pi-hole.net | bash
@@ -238,7 +246,7 @@ After Pi-Hole setup is complete, you should see the default Web Interface passwo
 pihole -a -p
 ```
 Now you can access the Pi-Hole Web Interface in your browser by going to `http://192.168.x.x/admin` where `192.168.x.x` is the static IP of your Raspberry Pi (you can also use http://pi.hole/admin once you point your router to use Pi-Hole as your DNS service in the next step). Go to Login, then enter the new password you set for the Web Interface and check the “Remember me for 7 days” checkbox before logging in. You won’t see much on the Dashboard yet since nothing on your network is using Pi-Hole, but that should change momentarily.
-
+![Pi-Hole Login](screenshots/pi-hole-login.png)
 ### Use Pi-Hole as Your DNS Server
 To make sure Pi-Hole is working, you can set a single device to use it as its DNS service or you can point your network’s router to it instead to force (almost) every device on your network to use Pi-Hole as its DNS service. Most routers have a setting for Primary and Secondary DNS, and you'll want to point the Primary DNS Server to the static IP address of your Raspberry Pi (`192.168.x.x`) and the Secondary DNS Server to a 3rd party DNS service like Google (8.8.8.8) or Cloudflare (1.1.1.1) in case your Pi-Hole server goes down for some reason and you don’t want to lose all connectivity to the outside world (like when you're fiddling around with your Raspberry Pi in the upcoming steps).
 
@@ -276,7 +284,7 @@ To get started, edit the Pi-Hole configuration file:
 sudo nano /etc/unbound/unbound.conf.d/pi-hole.conf
 ```
 and remove anything already in the file before copying and pasting the contents of the [sample pi-hole.conf](pi-hole.conf) configuration file in this repository. When you're done, exit and save the file.
-
+![Unbound Configuration File](screenshots/unbound-conf.png)
 Some things to note:
 ```
 port: 5353
@@ -336,9 +344,9 @@ Then go to **Settings > DNS** and uncheck any third party Upstream DNS Servers y
 127.0.0.1#5353
 ```
 Where `127.0.0.1` points the Pi-Hole server (the Raspberry Pi) to itself on port `5353`. If you changed the port in your Unbound configuration file, use that port here instead.
-
+![Pi-Hole DNS Settings](screenshots/pi-hole-dns-settings.png)
 Next, uncheck **Never forward non-FQDNs** and **Never forward reverse lookups for private IP ranges** and check **Use Conditional Forwarding** and enter your router’s IP address (typically something like `x.x.x.1` on your subnet), along with the Domain Name (this can be set on your router, usually under the DHCP settings, to something like `home`).
-
+![Pi-Hole Advanced DNS Settings](screenshots/pi-hole-conditional-forwarding.png)
 Lastly, *do not* check **Use DNSSEC** as Pi-Hole is going to be using your Unbound DNS, which already enables DNSSEC (Domain Name System Security Extensions).
 
 When you're done, don't forget to save your settings. To check and make sure DNSSEC is working, visit this URL in your browser within your network: http://dnssec.vs.uni-due.de
@@ -436,7 +444,9 @@ Create and edit the WireGuard configuration file:
 ```
 sudo nano /etc/wireguard/wg0.conf
 ```
-and replace the contents with the [WireGuard wg0.conf](wg0.conf) from this repository. You'll need to make the following changes:
+and replace the contents with the [WireGuard wg0.conf](wg0.conf) from this repository.
+![WireGuard Configuration File](screenshots/wireguard-conf.png)
+You'll need to make the following changes:
 ```
 [Interface]
 Address = 10.9.0.1/24
@@ -523,7 +533,7 @@ There are plenty of DDNS services out there, but I’m using [Afraid.org’s Fre
 First, create a Free DNS account at: http://freedns.afraid.org
 
 After account creation, verify your account using the link you’ll receive in your email. Then go to **Add Subdomain** and enter a **Subdomain** (a username, your name, company name, etc.) and choose a **Domain** (there are many to choose from besides what’s listed, follow the instructions to find the rest). Leave **Type** set to an A record, **TTL** is set to 3600 for free accounts, and **Wildcard** functionality is only for paid accounts.
-
+![Free DNS Add Subdomain](screenshots/freedns-add-subdomain.png)
 Your public IP address should be automatically filled in, but you can visit [IP Leak](http://www.ipleak.com) in a browser to get your public IP address if you need to.
 
 Enter the CAPTCHA text and hit **Save** to continue. You should now have a shiny new subdomain pointing to your network’s public IP address! But what if your public IP address changes at some point?
@@ -532,7 +542,7 @@ Enter the CAPTCHA text and hit **Save** to continue. You should now have a shiny
 Having a domain name pointed to your public IP address is useless if that IP address changes in the future, which is why DDNS services exist in the first place. We'll need to update our Free DNS record if our network's public IP address changes, which is fairly simple to do.
 
 While logged in at [Free DNS](http://freedns.afraid.org), go to the **Dynamic DNS** page and look for your new subdomain record. Right click the **Direct URL** link associated with your subdomain record and choose **Copy Link**. We'll use this to update your subdomain record directly from the Raspberry Pi.
-
+![Free DNS Domain Record](screenshots/freedns-dynamic-dns.png)
 On the Raspberry Pi, create a cronjob that runs every 5 minutes (replacing the XXXXX with the unique identifier in your Direct URL):
 ```
 crontab -l | { cat; echo "*/5 * * * * curl http://freedns.afraid.org/dynamic/update.php?XXXXX”; } | crontab -
@@ -581,7 +591,7 @@ qrencode -t ansiutf8 < /etc/wireguard/peer1.conf
 #### Import Client Configuration Using the QR Code
 Open the WireGuard app on your phone, tap **Add a tunnel** and select the **Create from QR code** option. Scan the QR code with your phone’s camera, give the tunnel a name, and allow WireGuard to add VPN configurations to your phone's operating system.
 
-Now you can enable or disable VPN access directly through the WireGuard app! 
+Now you can enable or disable VPN access directly through the WireGuard app!
 
 ### Finish WireGuard Installation
 On your Raspberry Pi, there are a few more steps needed to complete setup of the WireGuard VPN. First, allow WireGuard to start on boot:
@@ -665,9 +675,9 @@ https://github.com/pirate/wireguard-docs
 Unofficial, but hugely helpful, documentation on WireGuard.
 
 ## To-Do
-- Include screenshots of setup processes
-- Move from [IPtables (deprecated) to nftables](https://wiki.nftables.org/wiki-nftables/index.php/Moving_from_iptables_to_nftables)
-- Add an [SSL certificate for the Pi-Hole Web Interface](https://scotthelme.co.uk/securing-dns-across-all-of-my-devices-with-pihole-dns-over-https-1-1-1-1/)
-- Include [whitelist and blacklist additions](https://scotthelme.co.uk/catching-naughty-devices-on-my-home-network/)
-- Get local hostnames working in Pi-Hole so we can see device names instead of local IP addresses
-- Add support for guest networks (specifically for Apple routers like mine)
+- [ ] Include screenshots of setup processes
+- [ ] Move from [IPtables (deprecated) to nftables](https://wiki.nftables.org/wiki-nftables/index.php/Moving_from_iptables_to_nftables)
+- [ ] Add an [SSL certificate for the Pi-Hole Web Interface](https://scotthelme.co.uk/securing-dns-across-all-of-my-devices-with-pihole-dns-over-https-1-1-1-1/)
+- [ ] Include [whitelist and blacklist additions](https://scotthelme.co.uk/catching-naughty-devices-on-my-home-network/)
+- [ ] Get local hostnames working in Pi-Hole so we can see device names instead of local IP addresses
+- [ ] Add support for guest networks (specifically for Apple routers like mine)
