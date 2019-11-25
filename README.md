@@ -1,4 +1,3 @@
-# Raspberry Pi: Pi-Hole Ad-Blocking + Unbound DNS + WireGuard VPN
 This project is centered around getting a Raspberry Pi setup on a simple home network in order to block ads and naughty DNS requests, secure the DNS requests of all devices on the network, and provide a VPN solution for when any of these devices are outside of the network and would like to take advantage of the security (and speed) benefits of the network remotely.
 
 ![Ad-blocking VPN with local DNS resolution](https://repository-images.githubusercontent.com/223215131/d00dc480-0ec9-11ea-947d-288e8b8f9519)
@@ -642,36 +641,28 @@ Once you've added this port forwarding on your network's router, restart the dev
 ## References
 There are several write-ups out there on how to do this, as well as install scripts to do it for you. Since the Raspberry Pi was meant to be a learning tool, I used this opportunity to figure things out on my own with the help of documentation from both software creators and the community. If it weren't for the latter, I doubt I would've been able to do this on my own. Thanks to everyone who has taken the time to share their knowledge, and experience, in setting up a Raspberry Pi.
 
-**Build Your Own WireGuard VPN Server with Pi-Hole for DNS Level Ad Blocking**  
-https://www.sethenoka.com/build-your-own-wireguard-vpn-server-with-pi-hole-for-dns-level-ad-blocking/  
+**[Build Your Own WireGuard VPN Server with Pi-Hole for DNS Level Ad Blocking](https://www.sethenoka.com/build-your-own-wireguard-vpn-server-with-pi-hole-for-dns-level-ad-blocking/)**    
 Seth Enoka's write-up includes some additional firewall setup with IPtables, which I skipped. But this is an excellent reference for what we're doing, even though he uses a VPS with Ubuntu rather than a Raspberry Pi.
 
-**Raspbian GNU/Linux 10 (buster) Lite**  
-https://github.com/harrypnyce/raspbian10-buster  
+**[Raspbian GNU/Linux 10 (buster) Lite](https://github.com/harrypnyce/raspbian10-buster)**    
 Harry Nyce posted [his Pi experiments on Reddit](https://www.reddit.com/r/pihole/comments/c62np8/pihole_with_unbound_wireguard_vpn_server_on_a/), which prompted me to start this endeavor. I found his notes helpful, though the process was confusing at times.
 
-**AdBlocking VPN Proxy Server (Pi-hole, Wireguard, Privoxy, Unbound)**  
-https://github.com/crozuk/pi-hole-wireguard-privoxy  
+**[AdBlocking VPN Proxy Server (Pi-hole, Wireguard, Privoxy, Unbound)](https://github.com/crozuk/pi-hole-wireguard-privoxy)**    
 Richard Crosby's overview here is great, though missing some of the details. He's also adding a VPN proxy server, which I decided to skip.
 
-**Set up Pi-hole as truly self-contained DNS resolver**  
-https://github.com/anudeepND/pihole-unbound  
+**[Set up Pi-hole as truly self-contained DNS resolver](https://github.com/anudeepND/pihole-unbound)**    
 Anudeep's setup of Unbound to work with Pi-Hole was extremely helpful to understand how the two work together.
 
-**Unbound: How to enable DNSSEC**  
-https://www.nlnetlabs.nl/documentation/unbound/howto-anchor/  
+**[Unbound: How to enable DNSSEC](https://www.nlnetlabs.nl/documentation/unbound/howto-anchor/)**    
 NLnet Labs explains what DNSSEC is and how to enable it in Unbound.
 
-**Easy As Pi Installer**  
-https://github.com/ShaneCaler/EasyAsPiInstaller  
+**[Easy As Pi Installer](https://github.com/ShaneCaler/EasyAsPiInstaller)**    
 Shane Caler's "one-stop-shop" to set up WireGuard, Pi-Hole, and Unbound on a Raspberry Pi. I didn't have a chance to try this out, but it might be a nice replacement for all of this at some point (and it's also probably a good place to learn).
 
-**WireGuard Installation (Raspberry Pi 2 v1.2 and above)**  
-https://github.com/adrianmihalko/raspberrypiwireguard  
+**[WireGuard Installation (Raspberry Pi 2 v1.2 and above)](https://github.com/adrianmihalko/raspberrypiwireguard)**    
 Adrian Mihalko's execellent instructions on installing WireGuard on a Raspberry Pi.
 
-**Some Unofficial WireGuard Documentation**  
-https://github.com/pirate/wireguard-docs  
+**[Some Unofficial WireGuard Documentation](https://github.com/pirate/wireguard-docs)**    
 Unofficial, but hugely helpful, documentation on WireGuard.
 
 ## To-Do
