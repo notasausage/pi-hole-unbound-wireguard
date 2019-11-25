@@ -1,3 +1,4 @@
+# Raspberry Pi: Pi-Hole Ad-Blocking + Unbound DNS + WireGuard VPN
 This project is centered around getting a Raspberry Pi setup on a simple home network in order to block ads and naughty DNS requests, secure the DNS requests of all devices on the network, and provide a VPN solution for when any of these devices are outside of the network and would like to take advantage of the security (and speed) benefits of the network remotely.
 
 ![Ad-blocking VPN with local DNS resolution](https://repository-images.githubusercontent.com/223215131/d00dc480-0ec9-11ea-947d-288e8b8f9519)
