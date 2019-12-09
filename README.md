@@ -458,7 +458,7 @@ ListenPort = 51820
 ```
 The default port for WireGuard, which you can change if you'd like. You'll also need to open up this port on your router, otherwise incoming VPN traffic from outside your network *will not make it to WireGuard*. Information on how to do this is later in the guide.
 
-**Note**: Some public wifi networks will block all ports other than `80` (TCP), `443` (TCP), and `53` (UDP) for HTTP, HTTPS, and DNS respectively. If you are connected to a public wifi network that does this, you will not be able to connect to your WireGuard VPN. One way around this is to set your WireGuard `ListenPort` to `53` and create a forward on your network's router on port `53`, thus circumventing the issue with blocked ports.
+**Note**: Some public wifi networks will block all ports other than `80` (TCP), `443` (TCP), and `53` (UDP) for HTTP, HTTPS, and DNS respectively. If you are connected to a public wifi network that does this, you will not be able to connect to your WireGuard VPN. One way around this is to set your WireGuard `ListenPort` to `53` and create a forward on your network's router on port `53`, thus circumventing the issue with blocked ports. Do this at your own risk, and definitely **do not** enable Pi-Hole's *Listen on all interfaces, permit all origins* DNS option if you are forwarding port `53` on your router.
 ```
 DNS = 192.168.x.x
 ```
@@ -567,9 +567,9 @@ using the subdomain you chose on [Free DNS](http://freedns.afraid.org) and the `
 ### Setting Up Your Phone to Use the VPN
 Unlike IPSec or IKEv2, WireGuard isn’t built into the Android or iOS operating system (yet), so you’ll have to download [the WireGuard app](https://www.wireguard.com/install/) to each device to connect to your VPN. Here are some of the VPN clients available:
 
-Android: https://play.google.com/store/apps/details?id=com.wireguard.android&hl=en_US
-iOS: https://apps.apple.com/us/app/wireguard/id1441195209
-macOS: https://apps.apple.com/us/app/wireguard/id1451685025?mt=12
+Android: https://play.google.com/store/apps/details?id=com.wireguard.android&hl=en_US  
+iOS: https://apps.apple.com/us/app/wireguard/id1441195209  
+macOS: https://apps.apple.com/us/app/wireguard/id1451685025?mt=12  
 
 #### Export Client Configuration with a QR Code
 Rather than manually enter all the WireGuard configuration details into your phone, we can create a QR code directly on the Raspberry Pi console that your phone's native WireGuard app can scan and automatically fill out the details for you.
@@ -673,4 +673,4 @@ Unofficial, but hugely helpful, documentation on WireGuard.
 - [ ] Include [whitelist and blacklist additions](https://scotthelme.co.uk/catching-naughty-devices-on-my-home-network/)
 - [ ] Get local hostnames working in Pi-Hole so we can see device names instead of local IP addresses
 - [ ] Add support for guest networks (specifically for Apple routers like mine)
-- [ ] Including information about WireGuard's *On-Demand Activation* options (and SSID inclusions/exclusions)
+- [ ] Include information about WireGuard's *On-Demand Activation* options (and SSID inclusions/exclusions)
