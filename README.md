@@ -667,9 +667,10 @@ Adrian Mihalko's execellent instructions on installing WireGuard on a Raspberry 
 Unofficial, but hugely helpful, documentation on WireGuard.
 
 ## To-Do
-- [ ] Include screenshots of setup processes
+- [x] Include screenshots of setup processes
 - [ ] Move from [IPtables (deprecated) to nftables](https://wiki.nftables.org/wiki-nftables/index.php/Moving_from_iptables_to_nftables)
 - [ ] Add an [SSL certificate for the Pi-Hole Web Interface](https://scotthelme.co.uk/securing-dns-across-all-of-my-devices-with-pihole-dns-over-https-1-1-1-1/)
 - [ ] Include [whitelist and blacklist additions](https://scotthelme.co.uk/catching-naughty-devices-on-my-home-network/)
 - [ ] Get local hostnames working in Pi-Hole so we can see device names instead of local IP addresses
 - [ ] Add support for guest networks (specifically for Apple routers like mine)
+- [ ] Including information about WireGuard's *On-Demand Activation* options (and SSID inclusions/exclusions)
