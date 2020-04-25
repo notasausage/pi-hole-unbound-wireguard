@@ -13,7 +13,8 @@ While I won't have time to troubleshoot other setups, I'm sharing what I had to 
 + Raspberry Pi 3 Model B Plus Rev 1.3
 + Raspbian 10 Buster Lite
 + 16GB MicroSD card (4GB might be enough, but I'd stick with at least 8GB)
-+ Mac running macOS Mojave (for prepping, backing up, and restoring the SD card)
++ Mac running macOS Catalina (for prepping, backing up, and restoring the SD card)
++ The free [ApplePi-Baker](https://www.tweaking4all.com/hardware/raspberry-pi/applepi-baker-v2/) app for macOS
 + USB SD card reader (I use this simple [Anker 2-in-1 card reader](https://amzn.to/2OaNBd1))
 + Mouse and keyboard for intial Raspberry Pi setup (I used a Bluetooth mouse that has its own USB transmitter, and my wife's [Apple Magic Keyboard connected via a USB to Lightning cable](https://www.reddit.com/r/mac/comments/6m3rpm/question_possible_to_use_magic_keyboard_2_without/))
 + HDMI cable and montior for initial Raspberry Pi setup (I hooked mine to a TV)
@@ -24,12 +25,25 @@ That said, this process should work on any Raspberry Pi 2 v1.2 and above, and th
 ## Installing Raspbian on the Raspberry Pi
 There are many operating systems available to run on the Raspberry Pi, but we'll be using the latest version of Raspbian for this tutorial. There are also several different ways to install Rasbian on your Raspberry Pi, including N00Bs (New Out Of the Box Software). It's an easy operating system installer that allows you to erase your Raspberry Pi's SD card and start from scratch quickly, which is great when you're experimenting with your new device.
 
+### Step 1: Download N00BS
+You can [download N00BS](https://www.raspberrypi.org/downloads/noobs/) for free in either the full version (includes Raspbian and LibreELEC installation files) or the Lite version (nothing is pre-loaded, you'll download installation files from the internet during the setup of your Raspberry Pi). The difference here is that the Lite version takes much less time to load onto your SD card but then requires more time during setup on your Raspberry Pi to download all the files.
+
+**Note:** The full version is around 2.5GB of files that will take around 20-30 minutes to transfer to the SD card, at least with my configuration.
+
 ![Download N00BS](screenshots/n00bs-download.png)
 
-You can [download N00BS](https://www.raspberrypi.org/downloads/noobs/) for free in either the normal version (includes Raspbian and LibreELEC installation files) or the lite version (nothing is pre-loaded, you'll download installation files from the internet). Once downloaded, follow [the simple instructions](https://projects.raspberrypi.org/en/projects/raspberry-pi-setting-up/3) to get an SD card ready for your Raspberry Pi.
+### Step 2: Download, Install, and Open ApplePi-Baker
+If you're on a Mac, do yourself a favor and download the free utility [ApplePi-Baker](https://www.tweaking4all.com/hardware/raspberry-pi/applepi-baker-v2/). You can use it to create backups of your Raspberry Pi's SD card, restore from backups, and much more. For now though, we'll use it to quickly prep our SD card for N00BS installation.
+
+![Prepare Disk for N00Bs use](screenshots/applepi-baker-prepare.png)
+
+Select the disk utilities (small hard drive icon) in ApplePi-Baker and then right-click on your SD card. One of the menu options is **Prepare Disk for N00Bs use**. Run that and you should have a properly formatted SD card that's ready for your N00BS files.
+
+### Step 3: Copy Files from N00BS Folder to SD Card
+Once your downloaded N00BS archive is downloaded and uncompressed, copy all the files and folders inside your N00BS folder to the root of the SD card. You can also refer to the `INSTRUCTIONS-README.txt` file included with N00BS for more.
 
 ### Booting N00BS and Installing Raspbian
-Once the SD card is ready, insert it into your Raspberry Pi and boot it up. You'll be taken to the N00BS installer screen where you can choose to install any one of several operating systems, including Raspbian. You can choose from Lite (console only), Desktop (includes a GUI), or Full (Desktop and recommended applications).
+Once the SD card is ready, insert it into your Raspberry Pi and boot it up. If you need help, follow [these simple instructions](https://projects.raspberrypi.org/en/projects/raspberry-pi-setting-up/3) to get started with your Raspberry Pi. You'll be taken to the N00BS installer screen where you can choose to install any one of several operating systems, including Raspbian. You can choose from Lite (console only), Desktop (includes a GUI), or Full (Desktop and recommended applications).
 
 ![N00BS v2.2](screenshots/n00bs-setup.png)
 
@@ -161,7 +175,7 @@ sudo apt-get update
 Throughout the process of setting things up, you may want to have a backup of your Raspberry Pi so you don’t have to start from scratch if you make a mistake like I have (several times). You may even want to clone your Raspberry Pi after each successful step so you can return to it if the next step goes wrong. For instance, I was sure to create a backup of my Raspberry Pi after initial setup, after I had Pi-Hole working, after I added Unbound, and after I got WireGuard setup. That way if I made any changes that broke my setup, I could always revert the previous working installation.
 
 ### Backup the Raspberry Pi SD Card
-There are many ways to do this, but if you're on a Mac there is a very simple (and free) solution. You'll want to download the [ApplePi-Baker](https://www.tweaking4all.com/hardware/raspberry-pi/applepi-baker-v2/) app for macOS, which handles backing up your Raspberry Pi's SD card and can restore from several different formats as well.
+There are many ways to do this, but if you're on a Mac the aforementioned [ApplePi-Baker](https://www.tweaking4all.com/hardware/raspberry-pi/applepi-baker-v2/) app is fantastic and handles backing up your Raspberry Pi's SD card, not to mention restoring from several different formats as well.
 ![ApplePi-Baker macOS App](screenshots/applepi-baker.png)
 At any point you want to backup your Raspberry Pi's configuration, first shutdown the device with:
 ```
@@ -196,13 +210,13 @@ Open the macOS Disk Utility application, and choose View > Show All Devices. Rig
 **Note**: Both the Disk Utility and Terminal methods failed for me, both creating input/output errors. Maybe it was my SD card, or my card reader, but then using ApplePi-Baker gave me no issues, so I didn't bother to investigate further.
 
 ### Restoring a Raspberry Pi from Backup
-If you’ve made a backup of your Raspberry Pi’s SD card previously, you can restore it any time and overrite your current configuration. Using the ApplePi-Baker app on macOS, this is a simple task.
+If you’ve made a backup of your Raspberry Pi’s SD card previously, you can restore it any time and overwrite your current configuration. Using the ApplePi-Baker app on macOS, this is a simple task.
 
 First, shutdown your Raspberry Pi:
 ```
 sudo halt
 ```
-and remove the SD card from your Raspberry Pi. Using a supported SD card reader, insert the SD card from your Raspberry Pi into your Mac. Launch the ApplePi-Baker app and select the correct SD card disk, then choose the **Restore** option. ApplePi-Baker will expand the backup file and overrite the complete contents of your SD card with the backup file's contents, so make sure you really want to do this.
+and remove the SD card from your Raspberry Pi. Using a supported SD card reader, insert the SD card from your Raspberry Pi into your Mac. Launch the ApplePi-Baker app and select the correct SD card disk, then choose the **Restore** option. ApplePi-Baker will expand the backup file and overwrite the complete contents of your SD card with the backup file's contents, so make sure you really want to do this.
 
 #### Using the macOS Terminal to Restore
 You can also use the macOS Terminal application to this by typing:
@@ -247,6 +261,7 @@ pihole -a -p
 ```
 Now you can access the Pi-Hole Web Interface in your browser by going to `http://192.168.x.x/admin` where `192.168.x.x` is the static IP of your Raspberry Pi (you can also use http://pi.hole/admin once you point your router to use Pi-Hole as your DNS service in the next step). Go to Login, then enter the new password you set for the Web Interface and check the “Remember me for 7 days” checkbox before logging in. You won’t see much on the Dashboard yet since nothing on your network is using Pi-Hole, but that should change momentarily.
 ![Pi-Hole Login](screenshots/pi-hole-login.png)
+
 ### Use Pi-Hole as Your DNS Server
 To make sure Pi-Hole is working, you can set a single device to use it as its DNS service or you can point your network’s router to it instead to force (almost) every device on your network to use Pi-Hole as its DNS service. Most routers have a setting for Primary and Secondary DNS, and you'll want to point the Primary DNS Server to the static IP address of your Raspberry Pi (`192.168.x.x`) and the Secondary DNS Server to a 3rd party DNS service like Google (8.8.8.8) or Cloudflare (1.1.1.1) in case your Pi-Hole server goes down for some reason and you don’t want to lose all connectivity to the outside world (like when you're fiddling around with your Raspberry Pi in the upcoming steps).
 
