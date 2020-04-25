@@ -3,7 +3,7 @@ This project is centered around getting a Raspberry Pi setup on a simple home ne
 
 ![Ad-blocking VPN with local DNS resolution](https://repository-images.githubusercontent.com/223215131/d00dc480-0ec9-11ea-947d-288e8b8f9519)
 
-There are several guides written about this or similar setups, but in praactice there was always something missing or assumptions were made about certain steps in the process. This guide is meant to shed some light on those steps, simplify the process of getting setup, and explain my findings in order to help anyone else trying to do the same.
+There are several guides written about this or similar setups, but in practice there was always something missing or assumptions were made about certain steps in the process. This guide is meant to shed some light on those steps, simplify the process of getting setup, and explain my findings in order to help anyone else trying to do the same.
 
 This is what worked for me, your miles may vary.
 
@@ -16,14 +16,14 @@ While I won't have time to troubleshoot other setups, I'm sharing what I had to 
 + Mac running macOS Catalina (for prepping, backing up, and restoring the SD card)
 + The free [ApplePi-Baker](https://www.tweaking4all.com/hardware/raspberry-pi/applepi-baker-v2/) app for macOS
 + USB SD card reader (I use this simple [Anker 2-in-1 card reader](https://amzn.to/2OaNBd1))
-+ Mouse and keyboard for intial Raspberry Pi setup (I used a Bluetooth mouse that has its own USB transmitter, and my wife's [Apple Magic Keyboard connected via a USB to Lightning cable](https://www.reddit.com/r/mac/comments/6m3rpm/question_possible_to_use_magic_keyboard_2_without/))
-+ HDMI cable and montior for initial Raspberry Pi setup (I hooked mine to a TV)
++ Mouse and keyboard for initial Raspberry Pi setup (I used a Bluetooth mouse that has its own USB transmitter, and my wife's [Apple Magic Keyboard connected via a USB to Lightning cable](https://www.reddit.com/r/mac/comments/6m3rpm/question_possible_to_use_magic_keyboard_2_without/))
++ HDMI cable and monitor for initial Raspberry Pi setup (I hooked mine to a TV)
 + Apple Time Capsule router (connected directly to a cable modem, acting as a DHCP server)
 
 That said, this process should work on any Raspberry Pi 2 v1.2 and above, and there are Windows/Linux tools to handle the SD card management.
 
 ## Installing Raspbian on the Raspberry Pi
-There are many operating systems available to run on the Raspberry Pi, but we'll be using the latest version of Raspbian for this tutorial. There are also several different ways to install Rasbian on your Raspberry Pi, including N00Bs (New Out Of the Box Software). It's an easy operating system installer that allows you to erase your Raspberry Pi's SD card and start from scratch quickly, which is great when you're experimenting with your new device.
+There are many operating systems available to run on the Raspberry Pi, but we'll be using the latest version of Raspbian for this tutorial. There are also several different ways to install Raspbian on your Raspberry Pi, including N00Bs (New Out Of the Box Software). It's an easy operating system installer that allows you to erase your Raspberry Pi's SD card and start from scratch quickly, which is great when you're experimenting with your new device.
 
 ### Step 1: Download N00BS
 You can [download N00BS](https://www.raspberrypi.org/downloads/noobs/) for free in either the full version (includes Raspbian and LibreELEC installation files) or the Lite version (nothing is pre-loaded, you'll download installation files from the internet during the setup of your Raspberry Pi). The difference here is that the Lite version takes much less time to load onto your SD card but then requires more time during setup on your Raspberry Pi to download all the files.
@@ -38,6 +38,8 @@ If you're on a Mac, do yourself a favor and download the free utility [ApplePi-B
 ![Prepare Disk for N00Bs use](screenshots/applepi-baker-prepare.png)
 
 Select the disk utilities (small hard drive icon) in ApplePi-Baker and then right-click on your SD card. One of the menu options is **Prepare Disk for N00Bs use**. Run that and you should have a properly formatted SD card that's ready for your N00BS files.
+
+If you aren't on a Mac, or can't use ApplePi-Baker, you can format your SD card using the [SD Association's Formatting Tool](https://www.sdcard.org/downloads/formatter_4/), available for Windows and macOS. For Linux folks, try [gparted](https://gparted.org).
 
 ### Step 3: Copy Files from N00BS Folder to SD Card
 Once your downloaded N00BS archive is downloaded and uncompressed, copy all the files and folders inside your N00BS folder to the root of the SD card. You can also refer to the `INSTRUCTIONS-README.txt` file included with N00BS for more.
@@ -69,7 +71,7 @@ You can also follow along with [these instructions on adding a temporary user an
 We should enable SSH on the Raspberry Pi so that we can SSH into it from any device on the network, thus no longer needing the mouse, keyboard, HDMI cable, and screen. You'll need to know the IP address of your Raspberry Pi to continue.
 
 #### Setting Up a Static IP Address
-First we need the IP address and MAC address of the Raspberry Pi. It's highly recommeneded that you setup a static IP address on your network for your Raspberry Pi so that you can easily SSH into it, and later, point other services directly to it.
+First we need the IP address and MAC address of the Raspberry Pi. It's highly recommended that you setup a static IP address on your network for your Raspberry Pi so that you can easily SSH into it, and later, point other services directly to it.
 
 To get the current IP address of your Raspberry Pi, run:
 ```
@@ -79,11 +81,11 @@ And you'll see some output that should include both `eth0` details and `wlan0` d
 
 If your Raspberry Pi is wired into your network via an ethernet cable, take a look at the `eth0` interface and find the following line:
 ```
-inet 192.168.x.x  netmask 255.255.255.0  broadcast 192.168.x.255
+inet 192.168.x.x netmask 255.255.255.0 broadcast 192.168.x.255
 ```
 Where `192.168.x.x` is the IP address of the Raspberry Pi (I've obfuscated this for privacy reasons). The Raspberry Pi's MAC address is just below that on the line:
 ```
-ether ab:cd:ef:12:34:gh  txqueuelen 1000  (Ethernet)
+ether ab:cd:ef:12:34:gh txqueuelen 1000 (Ethernet)
 ```
 Where `ab:cd:ef:12:34:gh` would be the unique MAC address of the `eth0` interface on this Raspberry Pi. In order to force your network's router to give the Raspberry Pi a static IP address (the same IP every time it connects), you'll need to edit the settings of your router and add a DHCP Reservation:
 ```
@@ -113,11 +115,11 @@ Open the macOS Terminal application and type:
 ```
 ssh pi@192.168.x.x
 ```
-Where `pi` is the username on your Raspberry Pi and `192.168.x.x` is the static IP address you just setup. Then type the new password you set for the `pi` user to login. You should now be greeted with the Raspian console.
+Where `pi` is the username on your Raspberry Pi and `192.168.x.x` is the static IP address you just setup. Then type the new password you set for the `pi` user to login. You should now be greeted with the Raspbian console.
 
 **Note**: If you get an error that says the host identification has changed, you’ll need to remove the old entry (the one with the same static IP address) from your `~/.ssh/known_hosts` file first, then try again.
 
-##### Passwordless SSH Access
+##### Password-less SSH Access
 It's possible to [configure the Raspberry Pi to allow a computer to access it without providing a password each time](https://www.raspberrypi.org/documentation/remote-access/ssh/passwordless.md) you try to connect. In your Mac's Terminal app, [generate SSH key pairs](https://www.ssh.com/ssh/keygen/) with:
 ```
 ssh-keygen -t rsa -b 4096
@@ -185,7 +187,7 @@ or the more verbose:
 ```
 sudo shutdown -h now
 ```
-and then unplug your Rasbperry Pi (or get a [Pi Switch](https://amzn.to/2s7axRP) to make life easier). Remove the SD card from the Raspberry Pi and insert into a supported SD card reader (like the [Anker 2-in-1 card reader](https://amzn.to/2OaNBd1) I mentioned earlier), and connect to your Mac.
+and then unplug your Raspberry Pi (or get a [Pi Switch](https://amzn.to/2s7axRP) to make life easier). Remove the SD card from the Raspberry Pi and insert into a supported SD card reader (like the [Anker 2-in-1 card reader](https://amzn.to/2OaNBd1) I mentioned earlier), and connect to your Mac.
 
 When you open the ApplePi-Baker app, you should be able to select the SD card from the **Select a Disk** options (make sure you select the right disk), then choose the **Backup** option. In the file choose window, select **IMG** from the Format selections at the bottom of the window, and then give the backup file a name. This should take some time, be prepared to wait.
 ![ApplePi-Baker Backup Process](screenshots/applepi-baker-backup-process.png)
@@ -680,7 +682,7 @@ NLnet Labs explains what DNSSEC is and how to enable it in Unbound.
 Shane Caler's "one-stop-shop" to set up WireGuard, Pi-Hole, and Unbound on a Raspberry Pi. I didn't have a chance to try this out, but it might be a nice replacement for all of this at some point (and it's also probably a good place to learn).
 
 **[WireGuard Installation (Raspberry Pi 2 v1.2 and above)](https://github.com/adrianmihalko/raspberrypiwireguard)**    
-Adrian Mihalko's execellent instructions on installing WireGuard on a Raspberry Pi.
+Adrian Mihalko's excellent instructions on installing WireGuard on a Raspberry Pi.
 
 **[Some Unofficial WireGuard Documentation](https://github.com/pirate/wireguard-docs)**    
 Unofficial, but hugely helpful, documentation on WireGuard.
