@@ -103,7 +103,7 @@ If your Raspberry Pi is wired into your network via an ethernet cable, take a lo
 ```
 inet 192.168.x.x netmask 255.255.255.0 broadcast 192.168.x.255
 ```
-Where `192.168.x.x` is the IP address of the Raspberry Pi (I've obfuscated this for privacy reasons). If you see a line that starts with `inet6` instead, then your device is configured to use IPv6 instead of IPv4.
+Where `192.168.x.x` is the IP address of the Raspberry Pi (I've obfuscated this for privacy reasons). If you see a line that starts with `inet6`, then your device is configured to use IPv6 as well:
 ```
 inet6 feXX::XXXX:XXX:XXXX:XXXX prefixlen 64 scopeid 0x20<link>
 ```
@@ -132,16 +132,20 @@ You should be prompted to restart your Raspberry Pi. If you aren't, exit the Con
 ```
 sudo reboot
 ```
-**Note**: On reboot, if you notice any failures and end up in "Emergency Mode", make sure you've disconnected any Bluetooth USB modules (like the one I use for a Bluetooth mouse during installation). There seems to be [an issue around these modules](https://www.raspberrypi.org/forums/viewtopic.php?f=28&t=208966) which causes errors during bootup. After login under "Emergency Mode", type `systemctl default` or `exit` to reboot into "Default Mode."
+**Note**: On reboot, if you notice any failures and end up in "Emergency Mode", make sure you've disconnected any Bluetooth USB modules (like the one I use for a Bluetooth mouse during installation). There seems to be [an issue around these modules](https://www.raspberrypi.org/forums/viewtopic.php?f=28&t=208966) which causes errors during bootup. After login, under "Emergency Mode", type `systemctl default` or `exit` to reboot into "Default Mode."
 
 ##### Verify You Can SSH into the Raspberry Pi
-Now that you've enabled SSH on the Raspberry Pi and given it a static IP address, you should be able to do all of the following setup from another device by connecting via SSH. I'll be using a Mac in the following steps.
+Now that you've enabled SSH on the Raspberry Pi and given it a static IP address, you should be able to do all of the following setup from another device by connecting via SSH.
 
-Open the macOS Terminal application and type:
+On your system's console (I'm using the Terminal app for macOS) type:
 ```
 ssh pi@192.168.x.x
 ```
-Where `pi` is the username on your Raspberry Pi and `192.168.x.x` is the static IP address you just setup. Then type the new password you set for the `pi` user to login. You should now be greeted with the Raspbian console.
+Where `pi` is the username on your Raspberry Pi and `192.168.x.x` is the static IP address you just setup. If your system supports [mDNS](https://en.wikipedia.org/wiki/Multicast_DNS) (Macs do by default), you should be able to use `raspberrypi.local` [in place of your IP address](https://www.raspberrypi.org/documentation/remote-access/ip-address.md):
+```
+ssh pi@raspberrypi.local
+```
+Then type the new password you set for the `pi` user to login. You should now be greeted with the Raspbian console.
 
 **Note**: If you get an error that says the host identification has changed, you’ll need to remove the old entry (the one with the same static IP address) from your `~/.ssh/known_hosts` file first, then try again.
 
