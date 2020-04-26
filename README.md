@@ -147,7 +147,7 @@ ssh pi@raspberrypi.local
 ```
 Then type the new password you set for the `pi` user to login. You should now be greeted with the Raspbian console.
 
-**Note**: If you get an error that says the host identification has changed, you’ll need to remove the old entry (the one with the same static IP address) from your `~/.ssh/known_hosts` file first, then try again.
+**Note**: If you get an error that says the host identification has changed, you’ll need to remove the old entry (the one with the same static IP address) from your `hosts` file first (on a Mac, that file is `~/.ssh/known_hosts`), then try again.
 
 ##### Password-less SSH Access
 It's possible to [configure the Raspberry Pi to allow a computer to access it without providing a password each time](https://www.raspberrypi.org/documentation/remote-access/ssh/passwordless.md) you try to connect. In your Mac's Terminal app, [generate SSH key pairs](https://www.ssh.com/ssh/keygen/) with:
