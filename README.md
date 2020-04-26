@@ -16,9 +16,11 @@ While I won't have time to troubleshoot other setups, I'm sharing what I had to 
 + Mac running macOS Catalina (for prepping, backing up, and restoring the SD card)
 + The free [ApplePi-Baker](https://www.tweaking4all.com/hardware/raspberry-pi/applepi-baker-v2/) app for macOS
 + USB SD card reader (I use this simple [Anker 2-in-1 card reader](https://amzn.to/2OaNBd1))
-+ Mouse and keyboard for initial Raspberry Pi setup (I used a Bluetooth mouse that has its own USB transmitter, and my wife's [Apple Magic Keyboard connected via a USB to Lightning cable](https://www.reddit.com/r/mac/comments/6m3rpm/question_possible_to_use_magic_keyboard_2_without/))
++ Keyboard (and optional mouse) for initial Raspberry Pi setup (I used my wife's [Apple Magic Keyboard connected via a USB Lightning cable](https://www.reddit.com/r/mac/comments/6m3rpm/question_possible_to_use_magic_keyboard_2_without/))
 + HDMI cable and monitor for initial Raspberry Pi setup (I hooked mine to a TV)
 + Apple Time Capsule router (connected directly to a cable modem, acting as a DHCP server)
+
+**Note**: I originally used a cheap wireless mouse that has its own USB Bluetooth dongle, but had errors when booting my Raspberry Pi with it attached. After some research, it seems this may conflict with the Pi's onboard Bluetooth chip, and it was causing issues (dhcpcd was throwing errors as well). During my most recent install from scratch, I removed it completely and everything went smoothly. I don't think you really need a mouse at all if you're running Raspbian Lite anyway...
 
 That said, this process should work on any Raspberry Pi 2 v1.2 and above, and there are Windows/Linux tools to handle the SD card management.
 
@@ -43,7 +45,7 @@ Select the disk utilities (small hard drive icon) in ApplePi-Baker and then righ
 
 If you aren't on a Mac, or can't use ApplePi-Baker, you can format your SD card using the [SD Association's Formatting Tool](https://www.sdcard.org/downloads/formatter_4/), available for Windows and macOS. For Linux folks, try [gparted](https://gparted.org).
 
-**Note**: After formatting the SD card, I recommend safely ejecting it, removing it from your card reader, and then reinserting it before attempting to copy the N00BS files to it. Without doing this, I noticed some I/O errors when booting from my Raspberry Pi (similar to the [forum thread here](https://www.raspberrypi.org/forums/viewtopic.php?p=459823)).
+**Note**: After formatting the SD card, I recommend safely ejecting it, removing it from your card reader, and then reinserting it before attempting to copy the N00BS files to it. Without doing this, I sometimes end up with I/O errors when booting from my Raspberry Pi (similar to the [forum thread here](https://www.raspberrypi.org/forums/viewtopic.php?p=459823)). For more on installing Rasbian images, see the [Raspberry Pi documentation](https://www.raspberrypi.org/documentation/installation/installing-images/mac.md).
 
 ### Step 3: Copy Files from N00BS Folder to SD Card
 Once your downloaded N00BS archive is downloaded and uncompressed, copy all the files and folders inside your N00BS folder to the root of the SD card. You can also refer to the `INSTRUCTIONS-README.txt` file included with N00BS for more.
@@ -69,7 +71,7 @@ Once the SD card is ready, safely eject it from your compouter and insert it int
 
 For the purposes of this setup, we'll install Raspbian Lite (console only). If you ever want to add the desktop GUI, you can [always add that later](https://gist.github.com/kmpm/8e535a12a45a32f6d36cf26c7c6cef51).
 
-Installation generally takes about 10 minutes, but depends on whether you chose Lite or the normal N00BS files and how fast your internet connection is. Once installed, your Raspberry Pi will reboot into the console of a fresh install of Raspbian.
+Installation took just 7 minutes (with the full N00BS files, installing Raspbian Lite, over ethernet), but depends on many factors including whether you chose Lite or the normal N00BS files and how fast your internet connection is. Once installed, your Raspberry Pi will reboot into the console of a fresh install of Raspbian.
 
 ## Initial Setup of Raspbian
 To login to your freshly baked Raspberry Pi, use the default username/password pair of `pi` and `raspberry` (yes, very original). The first thing you should do is change your password:
@@ -101,11 +103,15 @@ If your Raspberry Pi is wired into your network via an ethernet cable, take a lo
 ```
 inet 192.168.x.x netmask 255.255.255.0 broadcast 192.168.x.255
 ```
-Where `192.168.x.x` is the IP address of the Raspberry Pi (I've obfuscated this for privacy reasons). The Raspberry Pi's MAC address is just below that on the line:
+Where `192.168.x.x` is the IP address of the Raspberry Pi (I've obfuscated this for privacy reasons). If you see a line that starts with `inet6` instead, then your device is configured to use IPv6 instead of IPv4.
+```
+inet6 feXX::XXXX:XXX:XXXX:XXXX prefixlen 64 scopeid 0x20<link>
+```
+The Raspberry Pi's MAC address is just below the `inet` line(s):
 ```
 ether ab:cd:ef:12:34:gh txqueuelen 1000 (Ethernet)
 ```
-Where `ab:cd:ef:12:34:gh` would be the unique MAC address of the `eth0` interface on this Raspberry Pi. In order to force your network's router to give the Raspberry Pi a static IP address (the same IP every time it connects), you'll need to edit the settings of your router and add a DHCP Reservation:
+Where `ab:cd:ef:12:34:gh` would be the unique MAC address of the `eth0` interface on this Raspberry Pi. In order to force your network's router to give the Raspberry Pi a static IP address (the same IP every time it connects), you'll need to modify the `/etc/dhcpcd.conf` file on the Raspberry Pi directly, or edit the settings of your router and add a DHCP Reservation (as I have below):
 ```
 Description: Raspberry Pi
 Reserve Address By: MAC Address
@@ -126,6 +132,8 @@ You should be prompted to restart your Raspberry Pi. If you aren't, exit the Con
 ```
 sudo reboot
 ```
+**Note**: On reboot, if you notice any failures and end up in "Emergency Mode", make sure you've disconnected any Bluetooth USB modules (like the one I use for a Bluetooth mouse during installation). There seems to be [an issue around these modules](https://www.raspberrypi.org/forums/viewtopic.php?f=28&t=208966) which causes errors during bootup. After login under "Emergency Mode", type `systemctl default` or `exit` to reboot into "Default Mode."
+
 ##### Verify You Can SSH into the Raspberry Pi
 Now that you've enabled SSH on the Raspberry Pi and given it a static IP address, you should be able to do all of the following setup from another device by connecting via SSH. I'll be using a Mac in the following steps.
 
