@@ -315,11 +315,13 @@ To install Unbound on the Raspberry Pi:
 ```
 sudo apt install unbound
 ```
+**Note**: If you've installed Pi-hole first and then Unbound as I have here, you might see some errors during installation of the latter, specifically `Job for unbound.service failed because the control process exited with error code.` After [some research](https://www.reddit.com/r/pihole/comments/faf0y6/unbound_fails_to_install_with_pihole/), I decided to continue on with [the Pi-hole guide to setting up Unbound](https://docs.pi-hole.net/guides/unbound/#setting-up-pi-hole-as-a-recursive-dns-server-solution), which seemed to work fine. I'm not sure what causes the errors, but I've decided not to investigate further at this time.
+
 Afterwards we'll need to download a `root.hints` file to replace the built-in hints:
 ```
 wget -O root.hints https://www.internic.net/domain/named.root
 ```
-Move the `root.hints` file to the Unbound configuration directory:
+Then move the `root.hints` file to the Unbound configuration directory:
 ```
 sudo mv root.hints /var/lib/unbound/
 ```
@@ -327,59 +329,69 @@ sudo mv root.hints /var/lib/unbound/
 ### Configure Unbound DNS
 Unbound includes a lot of different configuration options that you can adjust and try out. Feel free to scan the [Unbound configuration file documentation](https://www.nlnetlabs.nl/documentation/unbound/unbound.conf/) for details about each option.
 
-To get started, edit the Pi-Hole configuration file:
+To get started, edit the Unbound configuration file for Pi-hole:
 ```
 sudo nano /etc/unbound/unbound.conf.d/pi-hole.conf
 ```
-and remove anything already in the file before copying and pasting the contents of the [sample pi-hole.conf](pi-hole.conf) configuration file in this repository. When you're done, exit and save the file.
+and remove the contents of the file (there is likely nothing there yet) before copying and pasting the contents of the [sample pi-hole.conf](pi-hole.conf) configuration file in this repository. When you're done, exit and save the file.
 ![Unbound Configuration File](screenshots/unbound-conf.png)
-Some things to note:
+
+#### Configuration Details
+The default port for Unbound is `53` but we're changing it to `5353` here. Feel free to change it to whatever you like, but you'll need to remember it later when we tell Pi-Hole where to send upstream DNS requests:
 ```
 port: 5353
 ```
-The default port for Unbound is `53` but we're changing it to `5353` here. Feel free to change it to whatever you like, but you'll need to remember it later when we tell Pi-Hole where to send upstream DNS requests.
+This points to the `root.hints` file you just downloaded:
 ```
 # Use this only when you downloaded the list of primary root servers!
 root-hints: "/var/lib/unbound/root.hints"
 ```
-This points to the `root.hints` file you just downloaded.
+Here we're refusing connections to all interfaces and then we're allowing anything from this device (your Raspberry Pi) and anything from our local subnet (be sure to change `192.168.x.0` to whatever your local subnet is):
 ```
 # IPs authorized to access the DNS Server
 access-control: 0.0.0.0/0 refuse
 access-control: 127.0.0.1 allow
 access-control: 192.168.x.0/24 allow
 ```
-Here we're refusing connections to all interfaces and then we're allowing anything from this device (your Raspberry Pi) and anything from our local subnet (be sure to change `192.168.x.0` to whatever your local subnet is).
+You can adjust the cache settings if you like. Instead of the default of not caching, here we set the minimum TTL (Time To Live) to 1 hour, afterwards the DNS will do another lookup of the cached data:
 ```
 # Time To Live (in seconds) for DNS cache. Set cache-min-ttl to 0 remove caching (default).
 # Max cache default is 86400 (1 day).
 cache-min-ttl: 3600
 cache-max-ttl: 86400
 ```
-You can adjust the cache settings if you like. Instead of the default of not caching, here we set the minimum TTL (Time To Live) to 1 hour, afterwards the DNS will do another lookup of the cached data.
+When Pi-Hole was doing DNS, it created this custom record for http://pi.hole so we could easily reach the Web Interface without typing in the static IP address of the Raspberry Pi. Now that Unbound is our DNS, we'll need to create this custom record in the Unbound configuration file. Be sure to replace `192.168.x.x` with the static IP address of your Raspberry Pi:
 ```
 # Create DNS record for Pi-Hole Web Interface
 private-domain: "pi.hole"
 local-zone: "pi.hole" static
 local-data: "pi.hole IN A 192.168.x.x"
 ```
-When Pi-Hole was doing DNS, it created this custom record for http://pi.hole so we could easily reach the Web Interface without typing in the static IP address of the Raspberry Pi. Now that Unbound is our DNS, we'll need to create this custom record in the Unbound configuration file. Be sure to replace `192.168.x.x` with the static IP address of your Raspberry Pi.
-
 Once the configuration file is saved, start the Unbound DNS server:
 ```
 sudo service unbound start
 ```
-And test to make sure the Unbound DNS is running:
+And test to make sure the Unbound DNS is running (be sure to use the port you set above):
 ```
 dig pi-hole.net @127.0.0.1 -p 5353
 ```
-If you run this command, it should return a status of SERVFAIL:
+Which should return some information, including a `QUESTION SECTION` and an `ANSWER SECTION` that includes `pi-hole.net` and an IP address.
+#### Testing DNSSEC Validation
+Run the following command:
 ```
 dig sigfail.verteiltesysteme.net @127.0.0.1 -p 5353
 ```
-And this command should return a status of NOERROR:
+Which should return a status of SERVFAIL and no `ANSWER SECTION`:
+```
+;; ->>HEADER<<- opcode: QUERY, status: SERVFAIL, id: xxxxx
+```
+And then run this command:
 ```
 dig sigok.verteiltesysteme.net @127.0.0.1 -p 5353
+```
+Which should return a status of NOERROR and an `ANSWER SECTION`:
+```
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: xxxx
 ```
 
 ### Allow Pi-Hole to Use Unbound DNS
