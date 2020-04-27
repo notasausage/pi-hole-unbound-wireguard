@@ -155,11 +155,11 @@ It's possible to [configure the Raspberry Pi to allow a computer to access it wi
 ```
 ssh-keygen -t rsa -b 4096
 ```
-and enter a password for the SSH key (store this somewhere secure, you may need it at a later time). If you already have SSH key(s), give this pair a different name (such as `id_rsa_pi`). Now that the public and private keys have been generated on your Mac, you'll need to copy the public key to your Raspberry Pi using:
+and enter a password for the SSH key (store this somewhere secure, you may need it at a later time). If you already have SSH key(s), give this pair a different name (such as `id_rsa_pi`) or use your existing key. Now that the public and private keys have been generated on your Mac, you'll need to copy the public key to your Raspberry Pi using:
 ```
 ssh-copy-id pi@192.168.x.x
 ```
-where `pi` is the username you use on the Raspberry Pi and the `192.168.x.x` is the static IP address of the Raspberry Pi. You'll need to enter the password for the `pi` user to confirm the copy.
+where `pi` is the username you use on the Raspberry Pi and the `192.168.x.x` is the static IP address of the Raspberry Pi. You'll need to enter the password for the `pi` user to confirm the copy. From now on, you won't have to enter a password to SSH into your Raspberry Pi.
 
 ##### Keep Client SSH Keys in macOS Keychain
 Using [an SSH agent](https://www.ssh.com/ssh/agent), you can store your SSH key(s) in your Mac's Keychain for easy (and secure) access. Add your newly created SSH key pair to the macOS Keychain with:
