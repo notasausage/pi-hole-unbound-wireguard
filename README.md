@@ -183,7 +183,7 @@ sudo raspi-config
 ```
 ![Raspberry Pi Localisation Options](screenshots/raspbian-localisation-options.png)
 + Under **Network Options**, change the **Hostname** to something other than `raspberrypi` (most of the devices on my network are [named after Transformers](https://tfwiki.net/wiki/The_Transformers_(toyline))).
-+ Under **Localisation Options**, add to the **Locale** `en-us UTF8` and select it as the default locale (*do not* remove the default `en-gb UTF8` as it seems to cause issues)
++ Under **Localisation Options**, go to the **Change Locale** options and add `en-us.UTF-8` (or whatever your locale is) to your selected locales, then select it as the default locale (*do not* remove the default `en-gb.UTF-8` as it seems to cause issues)
 + Under **Localisation Options**, change the timezone to match yours
 
 ### Update Raspbian and Packages
