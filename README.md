@@ -285,14 +285,14 @@ sudo bash basic-install.sh
 ```
 During setup, select **OK** for the first few screens, then select either `eth0` for ethernet (wired) or `wlan0` for wireless (wifi) on the **Choose An Interface** screen. Next, select any **Upstream DNS Provider** since we’ll be using our own Unbound server later. Choose any **Block Lists** you want to use, or leave them all checked by default. Choose both IPv4 and IPv6 on the **Select Protocols** screen. Use the current network settings on the next screen, assuming you gave your Raspberry Pi a static IP address earlier. Then decide if you want to install the Web Interface for Pi-Hole (and `lighthttpd` to serve it), which you'll typically want to keep an eye on your traffic and blocked queries (and to make additional configuration changes) in a web browser.
 
-Lastly, decide how you want to log queries and what privacy mode do you want for FTL (Faster Than Light). Setup will finish, and the Pi-Hole DNS service will be running.
+Lastly, decide how you want to log queries and what [privacy level](https://docs.pi-hole.net/ftldns/privacylevels/) you want for FTL (Faster Than Light). Setup will finish, and the Pi-Hole DNS service will be running.
 
 ### Using Pi-Hole’s Web Interface
 After Pi-Hole setup is complete, you should see the default Web Interface password on the console. You can change the  password using:
 ```
 pihole -a -p
 ```
-Now you can access the Pi-Hole Web Interface in your browser by going to `http://192.168.x.x/admin` where `192.168.x.x` is the static IP of your Raspberry Pi (you can also use http://pi.hole/admin once you point your router to use Pi-Hole as your DNS service in the next step). Go to Login, then enter the new password you set for the Web Interface and check the “Remember me for 7 days” checkbox before logging in. You won’t see much on the Dashboard yet since nothing on your network is using Pi-Hole, but that should change momentarily.
+Now you can access the Pi-Hole Web Interface in your browser by going to `http://raspberrypi.local/admin` (if your device supports mDNS) or `http://192.168.x.x/admin`, where `192.168.x.x` is the static IP of your Raspberry Pi (you can also use http://pi.hole/admin once you point your router to use Pi-Hole as your DNS service in the next step). Go to Login, then enter the new password you set for the Web Interface and check the “Remember me for 7 days” checkbox before logging in. You won’t see much on the Dashboard yet since nothing on your network is using Pi-Hole, but that should change momentarily.
 ![Pi-Hole Login](screenshots/pi-hole-login.png)
 
 ### Use Pi-Hole as Your DNS Server
