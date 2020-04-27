@@ -74,18 +74,7 @@ For the purposes of this setup, we'll install Raspbian Lite (console only). If y
 Installation took just 7 minutes (with the full N00BS files, installing Raspbian Lite, over ethernet), but depends on many factors including whether you chose Lite or the normal N00BS files and how fast your internet connection is. Once installed, your Raspberry Pi will reboot into the console of a fresh install of Raspbian.
 
 ## Initial Setup of Raspbian
-To login to your freshly baked Raspberry Pi, use the default username/password pair of `pi` and `raspberry` (yes, very original). The first thing you should do is change your password:
-
-```
-passwd
-```
-
-Enter your current password (`raspberry`) and then type and retype a new password.
-
-### Optional: Change pi Username
-If you'd rather not stick with the default username of `pi`, changing your Raspbian username is unfortunately not as easy as you'd think. Because you're currently logged in as `pi` and you can't change the username of the current user, you have to get creative with how you go about this. You could create a new user, logout of the `pi` user, login as the new user, and then as root you can change the username of `pi` and its home directory. But now you have a second user.
-
-You can also follow along with [these instructions on adding a temporary user and using it to change pi's username](https://askubuntu.com/a/34075), but I can't vouch for this method as I skipped it altogether.
+To login to your freshly baked Raspberry Pi, use the default username/password pair of `pi` and `raspberry` (yes, very original). We'll change the password soon enough, but the next steps allow us to use our Pi in a headless state without having to rely on an external display or keyboard attached.
 
 ### Prepping Raspbian for SSH
 We should enable SSH on the Raspberry Pi so that we can SSH into it from any device on the network, thus no longer needing the mouse, keyboard, HDMI cable, and screen. You'll need to know the IP address of your Raspberry Pi to continue.
@@ -145,9 +134,21 @@ Where `pi` is the username on your Raspberry Pi and `192.168.x.x` is the static 
 ```
 ssh pi@raspberrypi.local
 ```
-Then type the new password you set for the `pi` user to login. You should now be greeted with the Raspbian console.
+Then type the default password of `raspberry` to login. You should now be greeted with the Raspbian console.
 
 **Note**: If you get an error that says the host identification has changed, you’ll need to remove the old entry (the one with the same static IP address) from your `hosts` file first (on a Mac, that file is `~/.ssh/known_hosts`), then try again.
+
+##### Change Your Password
+Using default passwords is obviously not a great idea, so your first task after you SSH into your newly setup Raspberry Pi is to change the password using:
+```
+passwd
+```
+Enter your current password (`raspberry`) and then type and retype a new password.
+
+**Optional: Change pi Username**
+If you'd rather not stick with the default username of `pi`, changing your Raspbian username is unfortunately not as easy as you'd think. Because you're currently logged in as `pi` and you can't change the username of the current user, you have to get creative with how you go about this. You could create a new user, logout of the `pi` user, login as the new user, and then as root you can change the username of `pi` and its home directory. But now you have a second user.
+
+You can also follow along with [these instructions on adding a temporary user and using it to change pi's username](https://askubuntu.com/a/34075), but I can't vouch for this method as I skipped it altogether.
 
 ##### Password-less SSH Access
 It's possible to [configure the Raspberry Pi to allow a computer to access it without providing a password each time](https://www.raspberrypi.org/documentation/remote-access/ssh/passwordless.md) you try to connect. In your Mac's Terminal app, [generate SSH key pairs](https://www.ssh.com/ssh/keygen/) with:
