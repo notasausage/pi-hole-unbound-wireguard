@@ -409,7 +409,10 @@ Next, uncheck **Never forward non-FQDNs** and **Never forward reverse lookups fo
 ![Pi-Hole Advanced DNS Settings](screenshots/pi-hole-conditional-forwarding.png)
 Lastly, *do not* check **Use DNSSEC** as Pi-Hole is going to be using your Unbound DNS, which already enables DNSSEC (Domain Name System Security Extensions).
 
-When you're done, don't forget to save your settings. To check and make sure DNSSEC is working, visit this URL in your browser within your network: http://dnssec.vs.uni-due.de
+**When you're done, don't forget to save your settings.**
+
+### Verify DNSSEC Signatures
+To ensure that Unbound is configured correctly, visit this [DNSSEC Resolver Test](http://dnssec.vs.uni-due.de) in a web browser using a device that's currently within your network and using your Raspberry Pi as a DNS server. Use the **Start test** button and this website will let you know whether or not Unbound is validating DNSSEC signatures.
 
 ## Setting Up a VPN with WireGuard
 > [WireGuard](https://www.wireguard.com) is an extremely simple yet fast and modern VPN that utilizes state-of-the-art cryptography. It aims to be faster, simpler, leaner, and more useful than IPsec, while avoiding the massive headache. It intends to be considerably more performant than OpenVPN.
