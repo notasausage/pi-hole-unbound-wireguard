@@ -421,38 +421,39 @@ First, install the necessary packages before WireGuard setup begins:
 ```
 sudo apt install raspberrypi-kernel-headers libelf-dev libmnl-dev build-essential git
 ```
-Switch to root with `sudo su` and enter the next 2 commands per the [Debian installation commands](https://www.wireguard.com/install/) (check to see if these have changed, and use the official Debian instructions if they have):
-```
-echo "deb http://deb.debian.org/debian/ unstable main" > /etc/apt/sources.list.d/unstable.list
-printf 'Package: *\nPin: release a=unstable\nPin-Priority: 90\n' > /etc/apt/preferences.d/limit-unstable
-```
-Then `exit` root.
-
-Run an APT update and ignore the error:
-```
-sudo apt update
-```
-Then install dirmngr for handling certificates:
-```
-sudo apt install dirmngr
-```
-
-You'll need to connect with the keyserver with both of these keys, though I'm not exactly sure why...
+Next, install the Debian distribution keys (otherwise your `apt update` will fail further down the line):
 ```
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7638D0442B90D010
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 04EE7237B7D453EC
 ```
+Switch to root with `sudo su` and enter the next 2 commands per the [Debian installation commands](https://www.wireguard.com/install/). since WireGuard is not included in the Raspbian distribution, we'll use the Debian one instead:
+```
+echo "deb http://deb.debian.org/debian/ unstable main" > /etc/apt/sources.list.d/unstable.list
+```
+Then we'll prevent our Raspberry Pi from using the Debian distribution for normal Raspbian packages:
+```
+printf 'Package: *\nPin: release a=unstable\nPin-Priority: 90\n' > /etc/apt/preferences.d/limit-unstable
+```
+Then `exit` root.
 
-### Update and Install WireGuard
-Run another APT update:
+Update the package list (and ignore the error):
 ```
 sudo apt update
 ```
-and then install WireGuard:
+Then install `dirmngr` for handling certificates if it isn't already installed (use `which dirmngr` to check):
+```
+sudo apt install dirmngr
+```
+### Install WireGuard
+Now you can install the WireGuard package:
 ```
 sudo apt install wireguard
 ```
-Next we'll enable IP forwarding:
+And to enable IP forwarding, you'll need to uncomment the `net.ipv4.ip_forward=1` line from your `/etc/sysctl.conf` file:
+```
+sudo nano /etc/sysctl.conf
+```
+Or you can type the following command to handle this for you:
 ```
 sudo perl -pi -e 's/#{1,}?net.ipv4.ip_forward ?= ?(0|1)/net.ipv4.ip_forward = 1/g' /etc/sysctl.conf
 ```
@@ -469,7 +470,7 @@ You should see `net.ipv4.ip_forward = 1` as a result, otherwise add the above co
 ### Generate Private & Public Keys for WireGuard
 In the next steps, we'll need to create private and public keys for both the WireGuard server as well as a VPN client. Once everything is setup, we can create additional keys for other clients to use the VPN as well.
 
-I've found it easiset to first become root before running the commands below:
+I've found it easiet to first become root before running the commands below:
 ```
 sudo su
 ```
@@ -489,11 +490,11 @@ Then generate a client’s private & public keys:
 ```
 wg genkey | tee peer1_privatekey | wg pubkey > peer1_publickey
 ```
-To confirm the keys were generated and permissioned:
+To confirm the keys were generated and have the correct file permissions:
 ```
 ls -la
 ```
-Finally, output your new WireGuard keys to the console and save them (possibly in a text file, just be sure to delete it when we're done) for the next steps:
+Finally, output your new WireGuard keys to the console and save them (somewhere safe, otherwise be sure and delete them when we're done here) for the next steps:
 ```
 cat server_privatekey
 cat server_publickey
@@ -509,46 +510,48 @@ sudo nano /etc/wireguard/wg0.conf
 ```
 and replace the contents with the [WireGuard wg0.conf](wg0.conf) from this repository.
 ![WireGuard Configuration File](screenshots/wireguard-conf.png)
-You'll need to make the following changes:
+
+#### Configuration Details
+This is the WireGuard interface, which will create a virtual subnet of `10.9.0.0` and assign itself an internal IP address of `10.9.0.1`. You can change this if you'd like, but you'll also need to change the internal IP of VPN clients as well.
 ```
 [Interface]
 Address = 10.9.0.1/24
 ```
-This is the WireGuard interface, which will create a virtual subnet of `10.9.0.0` and assign itself an internal IP address of `10.9.0.1`. You can change this if you'd like, but you'll also need to change the internal IP of VPN clients as well.
+The default port for WireGuard, which you can change if you'd like. You'll also need to open up this port on your router, otherwise incoming VPN traffic from outside your network *will not make it to WireGuard*. Information on how to do this is later in the guide.
 ```
 # Default WireGuard port, change to anything that doesn’t conflict
 ListenPort = 51820
 ```
-The default port for WireGuard, which you can change if you'd like. You'll also need to open up this port on your router, otherwise incoming VPN traffic from outside your network *will not make it to WireGuard*. Information on how to do this is later in the guide.
-
 **Note**: Some public wifi networks will block all ports other than `80` (TCP), `443` (TCP), and `53` (UDP) for HTTP, HTTPS, and DNS respectively. If you are connected to a public wifi network that does this, you will not be able to connect to your WireGuard VPN. One way around this is to set your WireGuard `ListenPort` to `53` and create a forward on your network's router on port `53`, thus circumventing the issue with blocked ports. Do this at your own risk, and definitely **do not** enable Pi-Hole's *Listen on all interfaces, permit all origins* DNS option if you are forwarding port `53` on your router.
+
+Replace `192.168.x.x` with the static IP address of your Raspberry Pi:
 ```
 DNS = 192.168.x.x
 ```
-Replace `192.168.x.x` with the static IP address of your Raspberry Pi.
+Replace `<server_privatekey>` with the output of your `cat server_privatekey` command earlier:
 ```
 PrivateKey = <server_privatekey>
 ```
-Replace `<server_privatekey>` with the output of your `cat server_privatekey` command earlier.
+We're using `eth0` here when the Raspberry Pi is connected over ethernet (wired), but you can replace both instances with `wlan0` if your Raspberry Pi is connected via wifi (wireless):
 ```
 PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
 ```
-We're using `eth0` here when the Raspberry Pi is connected over ethernet (wired), but you can replace both instances with `wlan0` if your Raspberry Pi is connected via wifi (wireless).
 
+##### Setup WireGuard Client Connections
 The next section of the WireGuard configuration file is for clients that connect to the VPN. For each client (device), you'll need to add another `[Peer]` section here and also create a separate client configuration file (details for that are next).
+
+Replace `<peer1_publickey>` with the output of your `cat peer1_publickey` command earlier:
 ```
 [Peer]
 # Peer 1
 PublicKey = <peer1_publickey>
 ```
-Replace `<peer1_publickey>` with the output of your `cat peer1_publickey` command earlier.
+Using the virtual subnet created by WireGuard, give this device an internal IP address of `10.9.0.2`:
 ```
 AllowedIPs = 10.9.0.2/32
 ```
-Using the virtual subnet created by WireGuard, give this device an internal IP address of `10.9.0.2`.
-
-Once your WireGuard configuration file is compelete, exit the `nano` editor and save your changes.
+Once your WireGuard configuration file is complete, exit the `nano` editor and save your changes.
 
 ### Configure a WireGuard Client
 Now that WireGuard is configured, we'll need to create a client configuration file for each VPN client we want to connect to the network. First, create and edit your first client configuration file:
