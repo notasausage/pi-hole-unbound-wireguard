@@ -558,36 +558,37 @@ Now that WireGuard is configured, we'll need to create a client configuration fi
 ```
 sudo nano /etc/wireguard/peer1.conf
 ```
-and replace the contents with the [WireGuard client peer1.conf](peer1.conf) from this repository. You'll need to make the following changes:
+and replace the contents with the [WireGuard client peer1.conf](peer1.conf) from this repository.
+
+#### Configuration Details
+Use the same virtual IP address that you used in the `wg0.conf` file earlier for this client:
 ```
 [Interface]
 Address = 10.9.0.2/32
 ```
-Use the same virtual IP address that you used in the `wg0.conf` file earlier for this client.
+Replace `192.168.x.x` with the static IP address of your Raspberry Pi:
 ```
 DNS = 192.168.x.x
 ```
-Replace `192.168.x.x` with the static IP address of your Raspberry Pi.
+Replace `<peer1_privatekey>` with the output of your `cat peer1_privatekey` command earlier:
 ```
 PrivateKey = <peer1_privatekey>
 ```
-Replace `<peer1_privatekey>` with the output of your `cat peer1_privatekey` command earlier.
+Replace `<server_publickey>` with the output of your `cat server_publickey` command earlier:
 ```
 [Peer]
 PublicKey = <server_publickey>
 ```
-Replace `<server_publickey>` with the output of your `cat server_publickey` command earlier.
+The `Endpoint` here refers to the public IP address and port number for incoming traffic to your network's router from the outside world. This is necessary so that devices outside your network know where to go to connect to your internal network's VPN. Your public IP address is available by visiting [IP Leak](http://www.ipleak.com), and the `ListenPort` should be set to the same port you set in your WireGuard's `wg0.conf` file (the default port is `51820`).
 ```
 Endpoint = YOUR-PUBLIC-IP/DDNS:ListenPort
 ```
-The `Endpoint` here refers to the public IP address and port number for incoming traffic to your network's router from the outside world. This is necessary so that devices outside your network know where to go to connect to your internal network's VPN. Your public IP address is available by visiting [IP Leak](http://www.ipleak.com), and the `ListenPort` should be set to the same port you set in your WireGuard's `wg0.conf` file (the default port is `51820`).
+For this use case, we're using a full tunnel rather than a [split tunnel](https://vpnbase.com/blog/what-is-vpn-split-tunneling/) (which allows some network traffic to come through outside of the VPN).
 ```
 # For full tunnel use 0.0.0.0/0, ::/0 and for split tunnel use 192.168.1.0/24
 # or whatever your router’s subnet is
 AllowedIPs = 0.0.0.0/0, ::/0
 ```
-For this use case, we're using a full tunnel rather than a [split tunnel](https://vpnbase.com/blog/what-is-vpn-split-tunneling/) (which allows some network traffic to come through outside of the VPN).
-
 ### Optional: Setup Dynamic DNS for Your Public IP address
 If your ISP does not provide you with a static IP address (most don’t), and your IP changes for some reason (cable modem reboot, connectivity issues, etc.), your home network may be unreachable from the outside until you update it in your configuration files.  The solution is to use a DDNS (Dynamic DNS) service where you choose a readable domain name and can automatically notify the service when your public IP address changes.
 
@@ -654,6 +655,8 @@ qrencode -t ansiutf8 < /etc/wireguard/peer1.conf
 ```
 **Note**: You may have to adjust the size of your Terminal/console window to properly show the QR code generated
 
+Then `exit` to return to your `pi` user.
+
 #### Import Client Configuration Using the QR Code
 Open the WireGuard app on your phone, tap **Add a tunnel** and select the **Create from QR code** option. Scan the QR code with your phone’s camera, give the tunnel a name, and allow WireGuard to add VPN configurations to your phone's operating system.
 
@@ -679,6 +682,8 @@ To check and see if the WireGuard interface was created successfully:
 ```
 ifconfig wg0
 ```
+You should see that `10.9.0.1` internal IP address we created in the `wg0.conf` file, along with some other flags.
+
 Restart your Raspberry Pi with:
 ```
 sudo reboot
@@ -687,7 +692,16 @@ Once the Raspberry Pi is done booting, check if WireGuard working:
 ```
 sudo wg
 ```
-You should see interface `wg0` and a peer.
+You should see interface `wg0` and a peer:
+```
+interface: wg0
+  public key: XXXXXXXXXXXXXXXXXXXXX
+  private key: (hidden)
+  listening port: 51820
+
+peer: XXXXXXXXXXXXXXXXXXXXX
+  allowed ips: 10.9.0.2/32
+```
 
 ### Open WireGuard VPN Port on Your Router
 Without this step, you will not be able to reach your VPN from outside of the network. None of the write-ups I found mentioned this step, most likely assuming you would already know to do this (I didn't).
@@ -706,7 +720,6 @@ Where `192.168.x.x` is the internal static IP address of the Raspberry Pi runnin
 Once you've added this port forwarding on your network's router, restart the device and now you should be able to connect to your WireGuard VPN from outside your network and enjoy the benefits of network-level ad-blocking from anywhere, at any time!
 
 ## Checking for a DNS Leak
-
 When connected to your VPN from outside the network, you can check to see if there are any leaks in your DNS lookups using the [DNS Leak Test service](https://dnsleaktest.com).
 
 ## References
