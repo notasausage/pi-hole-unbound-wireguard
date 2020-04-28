@@ -358,6 +358,14 @@ access-control: 0.0.0.0/0 refuse
 access-control: 127.0.0.1 allow
 access-control: 192.168.x.0/24 allow
 ```
+If your router creates a "Guest Network" with a separate SSID and DHCP range like mine (Apple Time Capsule), devices connecting to that wireless network will not be able to connect to the internet unless you grant access to that subnet. Uncomment one of the lines below or add your own based on your guest network's DHCP range:
+```
+# If you have a guest network with a separate DHCP range
+#access-control: 172.16.1.0/24 allow
+#access-control: 10.0.0.0/24 allow
+```
+**Note**: Devices connected to an AirPort guest network [will not be able to use Pi-hole](https://www.reddit.com/r/pihole/comments/fjpif9/pihole_doesnt_work_on_guest_network/) since your Raspberry Pi is on a separate DHCP range. They also will not have access to a DNS resolver, so they won't be able to connect to much of anything unless each device is set to manually connect to an outside DNS server, such as `1.1.1.1`. I have yet to figure out whether it's possible to get around this.
+
 You can adjust the cache settings if you like. Instead of the default of not caching, here we set the minimum TTL (Time To Live) to 1 hour, afterwards the DNS will do another lookup of the cached data:
 ```
 # Time To Live (in seconds) for DNS cache. Set cache-min-ttl to 0 remove caching (default).
@@ -441,7 +449,7 @@ printf 'Package: *\nPin: release a=unstable\nPin-Priority: 90\n' > /etc/apt/pref
 ```
 Then `exit` root.
 
-Update the package list (and ignore the error):
+Update the package list:
 ```
 sudo apt update
 ```
@@ -763,5 +771,5 @@ Step-by-step instructions on getting WireGuard working on a Raspberry Pi. Matche
 - [ ] Add an [SSL certificate for the Pi-Hole Web Interface](https://scotthelme.co.uk/securing-dns-across-all-of-my-devices-with-pihole-dns-over-https-1-1-1-1/)
 - [ ] Include [whitelist and blacklist additions](https://scotthelme.co.uk/catching-naughty-devices-on-my-home-network/)
 - [ ] Get local hostnames working in Pi-Hole so we can see device names instead of local IP addresses
-- [ ] Add support for guest networks (specifically for Apple routers like mine)
+- [ ] Add support for guest networks, if possible (specifically for Apple routers like mine)
 - [ ] Include information about WireGuard's *On-Demand Activation* options (and SSID inclusions/exclusions)
