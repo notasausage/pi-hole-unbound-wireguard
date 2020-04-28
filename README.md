@@ -1,10 +1,10 @@
-# Raspberry Pi: Pi-Hole Ad-Blocking + Unbound DNS + WireGuard VPN
+# Raspberry Pi: Pi-hole Ad-Blocking + Unbound DNS + WireGuard VPN
 
-This project is centered around getting a Raspberry Pi setup on a simple home network in order to block ads and naughty DNS requests, secure the DNS requests of all devices on the network, and provide a VPN solution for when any of these devices are outside of the network and would like to take advantage of the security (and speed) benefits of the network remotely.
+This project is centered around getting a Raspberry Pi set up on a simple home network in order to block ads and naughty DNS requests, secure the DNS requests of all devices on the network, and provide a VPN solution for when any of these devices are outside of the network and would like to take advantage of the security (and speed) benefits of the network remotely.
 
 ![Ad-blocking VPN with local DNS resolution](screenshots/header-image.png)
 
-There are several guides written about this or similar setups, but in practice there was always something missing or assumptions were made about certain steps in the process. This guide is meant to shed some light on those steps, simplify the process of getting setup, and explain my findings in order to help anyone else trying to do the same.
+There are several guides written about this or similar setups, but in practice, there was always something missing or assumptions were made about certain steps in the process. This guide is meant to shed some light on those steps, simplify the process of getting set up, and explain my findings in order to help anyone else trying to do the same.
 
 This is what worked for me, your miles may vary.
 
@@ -48,7 +48,7 @@ You can [download N00BS](https://www.raspberrypi.org/downloads/noobs/) for free 
 
 ### Step 2: Format the SD Card
 
-If you're on a Mac, do yourself a favor and download the free utility [ApplePi-Baker](https://www.tweaking4all.com/hardware/raspberry-pi/applepi-baker-v2/). You can use it to create backups of your Raspberry Pi's SD card, restore from backups, and much more. For now though, we'll use it to quickly prep our SD card for N00BS installation.
+If you're on a Mac, do yourself a favor and download the free utility [ApplePi-Baker](https://www.tweaking4all.com/hardware/raspberry-pi/applepi-baker-v2/). You can use it to create backups of your Raspberry Pi's SD card, restore from backups, and much more. For now, though, we'll use it to quickly prep our SD card for N00BS installation.
 
 ![Prepare Disk for N00Bs use](screenshots/applepi-baker-prepare.png)
 
@@ -78,11 +78,11 @@ Where `RASPBERRY` is the name of the SD card (this is the default for ApplePi-Ba
 
 ### Booting N00BS and Installing Raspbian
 
-Once the SD card is ready, safely eject it from your compouter and insert it into your Raspberry Pi, then boot your Pi. If you need help, follow [these simple instructions](https://projects.raspberrypi.org/en/projects/raspberry-pi-setting-up/3) to get started with your Raspberry Pi. You'll be taken to the N00BS installer screen where you can choose to install any one of several operating systems, including Raspbian. You can choose from Lite (console only), Desktop (includes a GUI), or Full (Desktop and recommended applications).
+Once the SD card is ready, safely eject it from your computer and insert it into your Raspberry Pi, then boot your Pi. If you need help, follow [these simple instructions](https://projects.raspberrypi.org/en/projects/raspberry-pi-setting-up/3) to get started with your Raspberry Pi. You'll be taken to the N00BS installer screen where you can choose to install any one of several operating systems, including Raspbian. You can choose from Lite (console only), Desktop (includes a GUI), or Full (Desktop and recommended applications).
 
 ![N00BS v2.2](screenshots/n00bs-setup.png)
 
-For the purposes of this setup, we'll install Raspbian Lite (console only). If you ever want to add the desktop GUI, you can [always add that later](https://gist.github.com/kmpm/8e535a12a45a32f6d36cf26c7c6cef51).
+For this setup, we'll install Raspbian Lite (console only). If you ever want to add the desktop GUI, you can [always add that later](https://gist.github.com/kmpm/8e535a12a45a32f6d36cf26c7c6cef51).
 
 Installation took just 7 minutes (with the full N00BS files, installing Raspbian Lite, over ethernet), but depends on many factors including whether you chose Lite or the normal N00BS files and how fast your internet connection is. Once installed, your Raspberry Pi will reboot into the console of a fresh install of Raspbian.
 
@@ -96,7 +96,7 @@ We should enable SSH on the Raspberry Pi so that we can SSH into it from any dev
 
 #### Setting Up a Static IP Address
 
-First we need the IP address and MAC address of the Raspberry Pi. It's highly recommended that you setup a static IP address on your network for your Raspberry Pi so that you can easily SSH into it, and later, point other services directly to it.
+First, we need the IP address and MAC address of the Raspberry Pi. It's highly recommended that you set up a static IP address on your network for your Raspberry Pi so that you can easily SSH into it, and later, point other services directly to it.
 
 To get the current IP address of your Raspberry Pi, run:
 
@@ -164,7 +164,7 @@ On your system's console (I'm using the Terminal app for macOS) type:
 ssh pi@192.168.x.x
 ```
 
-Where `pi` is the username on your Raspberry Pi and `192.168.x.x` is the static IP address you just setup. If your system supports [mDNS](https://en.wikipedia.org/wiki/Multicast_DNS) (Macs do by default), you should be able to use `raspberrypi.local` [in place of your IP address](https://www.raspberrypi.org/documentation/remote-access/ip-address.md):
+Where `pi` is the username on your Raspberry Pi and `192.168.x.x` is the static IP address you just set up. If your system supports [mDNS](https://en.wikipedia.org/wiki/Multicast_DNS) (Macs do by default), you should be able to use `raspberrypi.local` [in place of your IP address](https://www.raspberrypi.org/documentation/remote-access/ip-address.md):
 
 ```shell
 ssh pi@raspberrypi.local
@@ -266,13 +266,13 @@ sudo apt-get update
 
 ## Backup and Restore a Raspberry Pi
 
-Throughout the process of setting things up, you may want to have a backup of your Raspberry Pi so you don’t have to start from scratch if you make a mistake like I have (several times). You may even want to clone your Raspberry Pi after each successful step so you can return to it if the next step goes wrong. For instance, I was sure to create a backup of my Raspberry Pi after initial setup, after I had Pi-Hole working, after I added Unbound, and after I got WireGuard setup. That way if I made any changes that broke my setup, I could always revert the previous working installation.
+Throughout the process of setting things up, you may want to have a backup of your Raspberry Pi so you don’t have to start from scratch if you make a mistake like I have (several times). You may even want to clone your Raspberry Pi after each successful step so you can return to it if the next step goes wrong. For instance, I was sure to create a backup of my Raspberry Pi after initial setup, after I had Pi-hole working, after I added Unbound, and after I got WireGuard setup. That way if I made any changes that broke my setup, I could always revert the previous working installation.
 
 ### Backup the Raspberry Pi SD Card
 
 There are many ways to do this, but if you're on a Mac the aforementioned [ApplePi-Baker](https://www.tweaking4all.com/hardware/raspberry-pi/applepi-baker-v2/) app is fantastic and handles backing up your Raspberry Pi's SD card, not to mention restoring from several different formats as well.
 ![ApplePi-Baker macOS App](screenshots/applepi-baker.png)
-At any point you want to backup your Raspberry Pi's configuration, first shutdown the device with:
+At any point you want to backup your Raspberry Pi's configuration, first shut down the device with:
 
 ```shell
 sudo halt
@@ -284,7 +284,7 @@ or the more verbose:
 sudo shutdown -h now
 ```
 
-and then unplug your Raspberry Pi (or get a [Pi Switch](https://amzn.to/2s7axRP) to make life easier). Remove the SD card from the Raspberry Pi and insert into a supported SD card reader (like the [Anker 2-in-1 card reader](https://amzn.to/2OaNBd1) I mentioned earlier), and connect to your Mac.
+and then unplug your Raspberry Pi (or get a [Pi Switch](https://amzn.to/2s7axRP) to make life easier). Remove the SD card from the Raspberry Pi and insert it into a supported SD card reader (like the [Anker 2-in-1 card reader](https://amzn.to/2OaNBd1) I mentioned earlier), and connect to your Mac.
 
 When you open the ApplePi-Baker app, you should be able to select the SD card from the **Select a Disk** options (make sure you select the right disk), then choose the **Backup** option. In the file choose window, select **IMG** from the Format selections at the bottom of the window, and then give the backup file a name. This should take some time, be prepared to wait.
 
@@ -314,13 +314,13 @@ where `/dev/rdisk2` is the path to your SD card’s disk (with an added `r`) and
 
 Open the macOS Disk Utility application, and choose View > Show All Devices. Right click on the device name of the SD card (not the individual partition(s)!) and choose the **Image from ‘DEVICE NAME’** option. Give the file a name and choose a location to save it. Choose the DVD/CD master option for Format, and no Encryption. Disk Utility will create a .CDR file with your SD card’s files.
 
-**Note**: Both the Disk Utility and Terminal methods failed for me, both creating input/output errors. Maybe it was my SD card, or my card reader, but then using ApplePi-Baker gave me no issues, so I didn't bother to investigate further.
+**Note**: Both the Disk Utility and Terminal methods failed for me, both creating input/output errors. Maybe it was my SD card or my card reader, but then using ApplePi-Baker gave me no issues, so I didn't bother to investigate further.
 
 ### Restoring a Raspberry Pi from Backup
 
 If you’ve made a backup of your Raspberry Pi’s SD card previously, you can restore it any time and overwrite your current configuration. Using the ApplePi-Baker app on macOS, this is a simple task.
 
-First, shutdown your Raspberry Pi:
+First, shut down your Raspberry Pi:
 
 ```shell
 sudo halt
@@ -352,13 +352,13 @@ where `/dev/disk2` is the path to your SD card’s disk and `~/RaspberryPiBackup
 
 **Note**: If you backed up the SD card as a .CDR, you can rename it to .ISO and restore it to any SD card with the free [Etcher application](https://www.balena.io/etcher/) for macOS.
 
-## Setting Up Pi-Hole
+## Setting Up Pi-hole
 
-[Pi-Hole](https://pi-hole.net/) provides ad-blocking at the network level, meaning you not only stop ads from making it to any of the devices on your network, but you also block the unnecessary network requests for those ads and thus reduce bandwidth usage. Pi-Hole pairs nicely with a VPN (Virtual Private Network) so that you can connect remotely and still take advantage of ad-blocking from anywhere outside your network.
+[Pi-hole](https://pi-hole.net/) provides ad-blocking at the network level, meaning you not only stop ads from making it to any of the devices on your network, but you also block the unnecessary network requests for those ads and thus reduce bandwidth usage. Pi-hole pairs nicely with a VPN (Virtual Private Network) so that you can connect remotely and still take advantage of ad-blocking from anywhere outside your network.
 
-![Pi-Hole Dashboard](screenshots/pi-hole-dashboard.png)
+![Pi-hole Dashboard](screenshots/pi-hole-dashboard.png)
 
-First you'll need to run the Pi-Hole installer:
+First, you'll need to run the Pi-hole installer:
 
 ```shell
 sudo curl -sSL https://install.pi-hole.net | bash
@@ -376,27 +376,27 @@ and then run the installer as root:
 sudo bash basic-install.sh
 ```
 
-During setup, select **OK** for the first few screens, then select either `eth0` for ethernet (wired) or `wlan0` for wireless (wifi) on the **Choose An Interface** screen. Next, select any **Upstream DNS Provider** since we’ll be using our own Unbound server later. Choose any **Block Lists** you want to use, or leave them all checked by default. Choose both IPv4 and IPv6 on the **Select Protocols** screen. Use the current network settings on the next screen, assuming you gave your Raspberry Pi a static IP address earlier. Then decide if you want to install the Web Interface for Pi-Hole (and `lighthttpd` to serve it), which you'll typically want to keep an eye on your traffic and blocked queries (and to make additional configuration changes) in a web browser.
+During setup, select **OK** for the first few screens, then select either `eth0` for ethernet (wired) or `wlan0` for wireless (wifi) on the **Choose An Interface** screen. Next, select any **Upstream DNS Provider** since we’ll be using our own Unbound server later. Choose any **Block Lists** you want to use, or leave them all checked by default. Choose both IPv4 and IPv6 on the **Select Protocols** screen. Use the current network settings on the next screen, assuming you gave your Raspberry Pi a static IP address earlier. Then decide if you want to install the Web Interface for Pi-hole (and `lighthttpd` to serve it), which you'll typically want to keep an eye on your traffic and blocked queries (and to make additional configuration changes) in a web browser.
 
-Lastly, decide how you want to log queries and what [privacy level](https://docs.pi-hole.net/ftldns/privacylevels/) you want for FTL (Faster Than Light). Setup will finish, and the Pi-Hole DNS service will be running.
+Lastly, decide how you want to log queries and what [privacy level](https://docs.pi-hole.net/ftldns/privacylevels/) you want for FTL (Faster Than Light). Setup will finish, and the Pi-hole DNS service will be running.
 
-### Using Pi-Hole’s Web Interface
+### Using Pi-hole’s Web Interface
 
-After Pi-Hole setup is complete, you should see the default Web Interface password on the console. You can change the  password using:
+After Pi-hole’s setup is complete, you should see the default Web Interface password on the console. You can change the  password using:
 
 ```shell
 pihole -a -p
 ```
 
-Now you can access the Pi-Hole Web Interface in your browser by going to `http://raspberrypi.local/admin` (if your device supports mDNS) or `http://192.168.x.x/admin`, where `192.168.x.x` is the static IP of your Raspberry Pi (you can also use <http://pi.hole/admin> once you point your router to use Pi-Hole as your DNS service in the next step). Go to Login, then enter the new password you set for the Web Interface and check the “Remember me for 7 days” checkbox before logging in. You won’t see much on the Dashboard yet since nothing on your network is using Pi-Hole, but that should change momentarily.
+Now you can access the Pi-hole Web Interface in your browser by going to `http://raspberrypi.local/admin` (if your device supports mDNS) or `http://192.168.x.x/admin`, where `192.168.x.x` is the static IP of your Raspberry Pi (you can also use <http://pi.hole/admin> once you point your router to use Pi-hole as your DNS service in the next step). Go to Login, then enter the new password you set for the Web Interface and check the “Remember me for 7 days” checkbox before logging in. You won’t see much on the Dashboard yet since nothing on your network is using Pi-hole, but that should change momentarily.
 
-![Pi-Hole Login](screenshots/pi-hole-login.png)
+![Pi-hole Login](screenshots/pi-hole-login.png)
 
-### Use Pi-Hole as Your DNS Server
+### Use Pi-hole as Your DNS Server
 
-To make sure Pi-Hole is working, you can set a single device to use it as its DNS service or you can point your network’s router to it instead to force (almost) every device on your network to use Pi-Hole as its DNS service. Most routers have a setting for Primary and Secondary DNS, and you'll want to point the Primary DNS Server to the static IP address of your Raspberry Pi (`192.168.x.x`) and the Secondary DNS Server to a 3rd party DNS service like Google (8.8.8.8) or Cloudflare (1.1.1.1) in case your Pi-Hole server goes down for some reason and you don’t want to lose all connectivity to the outside world (like when you're fiddling around with your Raspberry Pi in the upcoming steps).
+To make sure Pi-hole is working, you can set a single device to use it as its DNS service or you can point your network’s router to it instead to force (almost) every device on your network to use Pi-hole as its DNS service. Most routers have a setting for Primary and Secondary DNS, and you'll want to point the Primary DNS Server to the static IP address of your Raspberry Pi (`192.168.x.x`) and the Secondary DNS Server to a 3rd party DNS service like Google (8.8.8.8) or Cloudflare (1.1.1.1) in case your Pi-hole server goes down for some reason and you don’t want to lose all connectivity to the outside world (like when you're fiddling around with your Raspberry Pi in the upcoming steps).
 
-Restart your router and watch as the Pi-Hole Dashboard (now available on your internal network at <http://pi.hole/admin>) fills up with blocked queries!
+Restart your router and watch as the Pi-hole Dashboard (now available on your internal network at <http://pi.hole/admin>) fills up with blocked queries!
 
 **Note**: If at any point your Raspberry Pi loses its connection with the outside world and you want to set a temporary DNS server to resolve it, run:
 
@@ -410,7 +410,7 @@ to temporarily set the device's DNS server to Google until you can figure out wh
 
 > [Unbound](https://www.nlnetlabs.nl/projects/unbound/about/) is a validating, recursive, caching DNS resolver. It is designed to be fast and lean and incorporates modern features based on open standards.
 
-Setting up Unbound DNS with your Pi-Hole installation allows us to [operate our own tiny, recursive DNS server](https://docs.pi-hole.net/guides/unbound/) instead of relying on (and sending data to) the big players like Google or Cloudflare.
+Setting up Unbound DNS with your Pi-hole installation allows us to [operate our own tiny, recursive DNS server](https://docs.pi-hole.net/guides/unbound/) instead of relying on (and sending data to) the big players like Google or Cloudflare.
 
 To install Unbound on the Raspberry Pi:
 
@@ -448,7 +448,7 @@ and remove the contents of the file (there is likely nothing there yet) before c
 
 #### Configuration Details
 
-The default port for Unbound is `53` but we're changing it to `5353` here. Feel free to change it to whatever you like, but you'll need to remember it later when we tell Pi-Hole where to send upstream DNS requests:
+The default port for Unbound is `53` but we're changing it to `5353` here. Feel free to change it to whatever you like, but you'll need to remember it later when we tell Pi-hole where to send upstream DNS requests:
 
 ```
 port: 5353
@@ -489,10 +489,10 @@ cache-min-ttl: 3600
 cache-max-ttl: 86400
 ```
 
-When Pi-Hole was doing DNS, it created this custom record for <http://pi.hole> so we could easily reach the Web Interface without typing in the static IP address of the Raspberry Pi. Now that Unbound is our DNS, we'll need to create this custom record in the Unbound configuration file. Be sure to replace `192.168.x.x` with the static IP address of your Raspberry Pi:
+When Pi-hole was doing DNS, it created this custom record for <http://pi.hole> so we could easily reach the Web Interface without typing in the static IP address of the Raspberry Pi. Now that Unbound is our DNS, we'll need to create this custom record in the Unbound configuration file. Be sure to replace `192.168.x.x` with the static IP address of your Raspberry Pi:
 
 ```
-# Create DNS record for Pi-Hole Web Interface
+# Create DNS record for Pi-hole Web Interface
 private-domain: "pi.hole"
 local-zone: "pi.hole" static
 local-data: "pi.hole IN A 192.168.x.x"
@@ -538,11 +538,11 @@ Which should return a status of NOERROR and an `ANSWER SECTION`:
 ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: xxxx
 ```
 
-### Allow Pi-Hole to Use Unbound DNS
+### Allow Pi-hole to Use Unbound DNS
 
-Now that your Unbound recursive DNS resolver is running locally, we'll force Pi-Hole to use it for DNS rather than an outside source like Google (8.8.8.8) or Cloudflare (1.1.1.1) and keep all of our network traffic contained. Any traffic on your network will be sent to Pi-Hole, which in turn will use Unbound for DNS resolution before blocking the appropriate domains and returning data.
+Now that your Unbound recursive DNS resolver is running locally, we'll force Pi-hole to use it for DNS rather than an outside source like Google (8.8.8.8) or Cloudflare (1.1.1.1) and keep all of our network traffic contained. Any traffic on your network will be sent to Pi-hole, which in turn will use Unbound for DNS resolution before blocking the appropriate domains and returning data.
 
-First, open the Pi-Hole Web Interface in a web browser on your local network: <http://pi.hole/admin>
+First, open the Pi-hole Web Interface in a web browser on your local network: <http://pi.hole/admin>
 
 Then go to **Settings > DNS** and uncheck any third party Upstream DNS Servers you had selected during setup. To the Custom 1 (IPv4) Upstream DNS Servers input, add:
 
@@ -550,15 +550,15 @@ Then go to **Settings > DNS** and uncheck any third party Upstream DNS Servers y
 127.0.0.1#5353
 ```
 
-Where `127.0.0.1` points the Pi-Hole server (the Raspberry Pi) to itself on port `5353`. If you changed the port in your Unbound configuration file, use that port here instead.
+Where `127.0.0.1` points the Pi-hole server (the Raspberry Pi) to itself on port `5353`. If you changed the port in your Unbound configuration file, use that port here instead.
 
-![Pi-Hole DNS Settings](screenshots/pi-hole-dns-settings.png)
+![Pi-hole DNS Settings](screenshots/pi-hole-dns-settings.png)
 
 Next, uncheck **Never forward non-FQDNs** and **Never forward reverse lookups for private IP ranges** and check **Use Conditional Forwarding** and enter your router’s IP address (typically something like `x.x.x.1` on your subnet), along with the Domain Name (this can be set on your router, usually under the DHCP settings, to something like `home`).
 
-![Pi-Hole Advanced DNS Settings](screenshots/pi-hole-conditional-forwarding.png)
+![Pi-hole Advanced DNS Settings](screenshots/pi-hole-conditional-forwarding.png)
 
-Lastly, *do not* check **Use DNSSEC** as Pi-Hole is going to be using your Unbound DNS, which already enables DNSSEC (Domain Name System Security Extensions).
+Lastly, *do not* check **Use DNSSEC** as Pi-hole is going to be using your Unbound DNS, which already enables DNSSEC (Domain Name System Security Extensions).
 
 **When you're done, don't forget to save your settings.**
 
@@ -568,7 +568,7 @@ To ensure that Unbound is configured correctly, visit this [DNSSEC Resolver Test
 
 ## Setting Up a VPN with WireGuard
 
-> [WireGuard](https://www.wireguard.com/) is an extremely simple yet fast and modern VPN that utilizes state-of-the-art cryptography. It aims to be faster, simpler, leaner, and more useful than IPsec, while avoiding the massive headache. It intends to be considerably more performant than OpenVPN.
+> [WireGuard](https://www.wireguard.com/) is an extremely simple yet fast and modern VPN that utilizes state-of-the-art cryptography. It aims to be faster, simpler, leaner, and more useful than IPSec while avoiding the massive headache. It intends to be considerably more performant than OpenVPN.
 
 First, install the necessary packages before WireGuard setup begins:
 
@@ -645,9 +645,9 @@ You should see `net.ipv4.ip_forward = 1` as a result, otherwise add the above co
 
 ### Generate Private & Public Keys for WireGuard
 
-In the next steps, we'll need to create private and public keys for both the WireGuard server as well as a VPN client. Once everything is setup, we can create additional keys for other clients to use the VPN as well.
+In the next steps, we'll need to create private and public keys for both the WireGuard server as well as a VPN client. Once everything is set up, we can create additional keys for other clients to use the VPN as well.
 
-I've found it easiet to first become root before running the commands below:
+I've found it easiest to first become root before running the commands below:
 
 ```shell
 sudo su
@@ -722,7 +722,7 @@ The default port for WireGuard, which you can change if you'd like. You'll also 
 ListenPort = 51820
 ```
 
-**Note**: Some public wifi networks will block all ports other than `80` (TCP), `443` (TCP), and `53` (UDP) for HTTP, HTTPS, and DNS respectively. If you are connected to a public wifi network that does this, you will not be able to connect to your WireGuard VPN. One way around this is to set your WireGuard `ListenPort` to `53` and create a forward on your network's router on port `53`, thus circumventing the issue with blocked ports. Do this at your own risk, and definitely **do not** enable Pi-Hole's *Listen on all interfaces, permit all origins* DNS option if you are forwarding port `53` on your router.
+**Note**: Some public wifi networks will block all ports other than `80` (TCP), `443` (TCP), and `53` (UDP) for HTTP, HTTPS, and DNS respectively. If you are connected to a public wifi network that does this, you will not be able to connect to your WireGuard VPN. One way around this is to set your WireGuard `ListenPort` to `53` and create a forward on your network's router on port `53`, thus circumventing the issue with blocked ports. Do this at your own risk, and definitely, **do not** enable Pi-hole's *Listen on all interfaces, permit all origins* DNS option if you are forwarding port `53` on your router.
 
 Replace `192.168.x.x` with the static IP address of your Raspberry Pi:
 
@@ -903,7 +903,7 @@ Create a QR code from the VPN client configuration we set up earlier:
 qrencode -t ansiutf8 < /etc/wireguard/peer1.conf
 ```
 
-**Note**: You may have to adjust the size of your Terminal/console window to properly show the QR code generated
+**Note**: You may have to adjust the size of your terminal/console window to properly show the QR code generated
 
 Then `exit` to return to your `pi` user.
 
@@ -915,7 +915,7 @@ Now you can enable or disable VPN access directly through the WireGuard app!
 
 ### Finish WireGuard Installation
 
-On your Raspberry Pi, there are a few more steps needed to complete setup of the WireGuard VPN. First, allow WireGuard to start on boot:
+On your Raspberry Pi, there are a few more steps needed to complete the setup of the WireGuard VPN. First, allow WireGuard to start on boot:
 
 ```shell
 sudo systemctl enable wg-quick@wg0
@@ -928,7 +928,7 @@ sudo chown -R root:root /etc/wireguard/
 sudo chmod -R og-rwx /etc/wireguard/
 ```
 
-On your Pi-Hole Web Interface, go to **Settings > DNS** and choose the **Listen on all interfaces, permit all origins** option under **Interface listening behavior**, then save your settings.
+On your Pi-hole Web Interface, go to **Settings > DNS** and choose the **Listen on all interfaces, permit all origins** option under **Interface listening behavior**, then save your settings.
 
 Start WireGuard now with:
 
@@ -972,7 +972,7 @@ peer: XXXXXXXXXXXXXXXXXXXXX
 
 Without this step, you will not be able to reach your VPN from outside of the network. None of the write-ups I found mentioned this step, most likely assuming you would already know to do this (I didn't).
 
-In order to reach your VPN from outside your network, you'll have to setup a **UDP-specific port forward** on your network's router that passes traffic on that port to an internal IP address of your choosing. Generally speaking, this might look like:
+In order to reach your VPN from outside your network, you'll have to set up a **UDP-specific port forward** on your network's router that passes traffic on that port to an internal IP address of your choosing. Generally speaking, this might look like:
 
 ```
 Description: WireGuard VPN
@@ -981,7 +981,7 @@ Private IP Address: 192.168.x.x
 Private UDP Ports: 51820
 ```
 
-Where `192.168.x.x` is the internal static IP address of the Raspberry Pi running WireGuard, and `51820` is whatever you set the `ListenPort` to in your `/etc/wireguard/wg0.conf` file. Each router has different settings available, but the above are from my Apple Time Capsule's AirPort Utility in macOS.
+Where `192.168.x.x` is the internal static IP address of the Raspberry Pi running WireGuard, and `51820` is whatever you set the `ListenPort` to in your `/etc/wireguard/wg0.conf` file. Each router has different settings available, but the above is from my Apple Time Capsule's AirPort Utility in macOS.
 
 **Note**: I'm passing just UDP traffic on this port, as WireGuard uses UDP and not TCP.
 
@@ -995,7 +995,7 @@ When connected to your VPN from outside the network, you can check to see if the
 
 There are several write-ups out there on how to do this, as well as install scripts to do it for you. Since the Raspberry Pi was meant to be a learning tool, I used this opportunity to figure things out on my own with the help of documentation from both software creators and the community. If it weren't for the latter, I doubt I would've been able to do this on my own. Thanks to everyone who has taken the time to share their knowledge, and experience, in setting up a Raspberry Pi.
 
-- **[Build Your Own WireGuard VPN Server with Pi-Hole for DNS Level Ad Blocking](https://www.sethenoka.com/build-your-own-wireguard-vpn-server-with-pi-hole-for-dns-level-ad-blocking/)**  
+- **[Build Your Own WireGuard VPN Server with Pi-hole for DNS Level Ad Blocking](https://www.sethenoka.com/build-your-own-wireguard-vpn-server-with-pi-hole-for-dns-level-ad-blocking/)**  
 Seth Enoka's write-up includes some additional firewall setup with IPtables, which I skipped. But this is an excellent reference for what we're doing, even though he uses a VPS with Ubuntu rather than a Raspberry Pi.
 
 - **[Raspbian GNU/Linux 10 (buster) Lite](https://github.com/harrypnyce/raspbian10-buster)**  
@@ -1005,13 +1005,13 @@ Harry Nyce posted [his Pi experiments on Reddit](https://www.reddit.com/r/pihole
 Richard Crosby's overview here is great, though missing some of the details. He's also adding a VPN proxy server, which I decided to skip.
 
 - **[Set up Pi-hole as truly self-contained DNS resolver](https://github.com/anudeepND/pihole-unbound)**  
-Anudeep's setup of Unbound to work with Pi-Hole was extremely helpful to understand how the two work together.
+Anudeep's setup of Unbound to work with Pi-hole was extremely helpful to understand how the two work together.
 
 - **[Unbound: How to enable DNSSEC](https://www.nlnetlabs.nl/documentation/unbound/howto-anchor/)**  
 NLnet Labs explains what DNSSEC is and how to enable it in Unbound.
 
 - **[Easy As Pi Installer](https://github.com/ShaneCaler/EasyAsPiInstaller)**  
-Shane Caler's "one-stop-shop" to set up WireGuard, Pi-Hole, and Unbound on a Raspberry Pi. I didn't have a chance to try this out, but it might be a nice replacement for all of this at some point (and it's also probably a good place to learn).
+Shane Caler's "one-stop-shop" to set up WireGuard, Pi-hole, and Unbound on a Raspberry Pi. I didn't have a chance to try this out, but it might be a nice replacement for all of this at some point (and it's also probably a good place to learn).
 
 - **[WireGuard Installation (Raspberry Pi 2 v1.2 and above)](https://github.com/adrianmihalko/raspberrypiwireguard)**  
 Adrian Mihalko's excellent instructions on installing WireGuard on a Raspberry Pi.
@@ -1026,8 +1026,8 @@ Step-by-step instructions on getting WireGuard working on a Raspberry Pi. Matche
 
 - [x] Include screenshots of setup processes
 - [ ] Move from [IPtables (deprecated) to nftables](https://wiki.nftables.org/wiki-nftables/index.php/Moving_from_iptables_to_nftables)
-- [ ] Add an [SSL certificate for the Pi-Hole Web Interface](https://scotthelme.co.uk/securing-dns-across-all-of-my-devices-with-pihole-dns-over-https-1-1-1-1/)
+- [ ] Add an [SSL certificate for the Pi-hole Web Interface](https://scotthelme.co.uk/securing-dns-across-all-of-my-devices-with-pihole-dns-over-https-1-1-1-1/)
 - [ ] Include [whitelist and blacklist additions](https://scotthelme.co.uk/catching-naughty-devices-on-my-home-network/)
-- [ ] Get local hostnames working in Pi-Hole so we can see device names instead of local IP addresses
+- [ ] Get local hostnames working in Pi-hole so we can see device names instead of local IP addresses
 - [ ] Add support for guest networks, if possible (specifically for Apple routers like mine)
 - [ ] Include information about WireGuard's *On-Demand Activation* options (and SSID inclusions/exclusions)
