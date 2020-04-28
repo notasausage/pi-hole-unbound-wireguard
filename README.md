@@ -54,7 +54,7 @@ If you're on a Mac, do yourself a favor and download the free utility [ApplePi-B
 
 Select the disk utilities (small hard drive icon) in ApplePi-Baker and then right-click on your SD card. One of the menu options is **Prepare Disk for N00Bs use**. Run that and you should have a properly formatted SD card that's ready for your N00BS files.
 
-If you aren't on a Mac, or can't use ApplePi-Baker, you can format your SD card using the [SD Association's Formatting Tool](https://www.sdcard.org/downloads/formatter_4/), available for Windows and macOS. For Linux folks, try [gparted](https://gparted.org).
+If you aren't on a Mac, or can't use ApplePi-Baker, you can format your SD card using the [SD Association's Formatting Tool](https://www.sdcard.org/downloads/formatter/), available for Windows and macOS. For Linux folks, try [gparted](https://gparted.org/).
 
 **Note**: After formatting the SD card, I recommend safely ejecting it, removing it from your card reader, and then reinserting it before attempting to copy the N00BS files to it. Without doing this, I sometimes end up with I/O errors when booting from my Raspberry Pi (similar to the [forum thread here](https://www.raspberrypi.org/forums/viewtopic.php?p=459823)). For more on installing Rasbian images, see the [Raspberry Pi documentation](https://www.raspberrypi.org/documentation/installation/installing-images/mac.md).
 
@@ -208,7 +208,7 @@ where `pi` is the username you use on the Raspberry Pi and the `192.168.x.x` is 
 
 ##### Keep Client SSH Keys in macOS Keychain
 
-Using [an SSH agent](https://www.ssh.com/ssh/agent), you can store your SSH key(s) in your Mac's Keychain for easy (and secure) access. Add your newly created SSH key pair to the macOS Keychain with:
+Using [an SSH agent](https://www.ssh.com/ssh/agent/), you can store your SSH key(s) in your Mac's Keychain for easy (and secure) access. Add your newly created SSH key pair to the macOS Keychain with:
 
 ```shell
 ssh-add -K ~/.ssh/id_rsa_pi
@@ -354,7 +354,7 @@ where `/dev/disk2` is the path to your SD card’s disk and `~/RaspberryPiBackup
 
 ## Setting Up Pi-Hole
 
-[Pi-Hole](https://pi-hole.net) provides ad-blocking at the network level, meaning you not only stop ads from making it to any of the devices on your network, but you also block the unnecessary network requests for those ads and thus reduce bandwidth usage. Pi-Hole pairs nicely with a VPN (Virtual Private Network) so that you can connect remotely and still take advantage of ad-blocking from anywhere outside your network.
+[Pi-Hole](https://pi-hole.net/) provides ad-blocking at the network level, meaning you not only stop ads from making it to any of the devices on your network, but you also block the unnecessary network requests for those ads and thus reduce bandwidth usage. Pi-Hole pairs nicely with a VPN (Virtual Private Network) so that you can connect remotely and still take advantage of ad-blocking from anywhere outside your network.
 
 ![Pi-Hole Dashboard](screenshots/pi-hole-dashboard.png)
 
@@ -564,11 +564,11 @@ Lastly, *do not* check **Use DNSSEC** as Pi-Hole is going to be using your Unbou
 
 ### Verify DNSSEC Signatures
 
-To ensure that Unbound is configured correctly, visit this [DNSSEC Resolver Test](http://dnssec.vs.uni-due.de) in a web browser using a device that's currently within your network and using your Raspberry Pi as a DNS server. Use the **Start test** button and this website will let you know whether or not Unbound is validating DNSSEC signatures.
+To ensure that Unbound is configured correctly, visit this [DNSSEC Resolver Test](https://dnssec.vs.uni-due.de/) in a web browser using a device that's currently within your network and using your Raspberry Pi as a DNS server. Use the **Start test** button and this website will let you know whether or not Unbound is validating DNSSEC signatures.
 
 ## Setting Up a VPN with WireGuard
 
-> [WireGuard](https://www.wireguard.com) is an extremely simple yet fast and modern VPN that utilizes state-of-the-art cryptography. It aims to be faster, simpler, leaner, and more useful than IPsec, while avoiding the massive headache. It intends to be considerably more performant than OpenVPN.
+> [WireGuard](https://www.wireguard.com/) is an extremely simple yet fast and modern VPN that utilizes state-of-the-art cryptography. It aims to be faster, simpler, leaner, and more useful than IPsec, while avoiding the massive headache. It intends to be considerably more performant than OpenVPN.
 
 First, install the necessary packages before WireGuard setup begins:
 
@@ -801,13 +801,13 @@ Replace `<server_publickey>` with the output of your `cat server_publickey` comm
 PublicKey = <server_publickey>
 ```
 
-The `Endpoint` here refers to the public IP address and port number for incoming traffic to your network's router from the outside world. This is necessary so that devices outside your network know where to go to connect to your internal network's VPN. Your public IP address is available by visiting [IP Leak](http://www.ipleak.com), and the `ListenPort` should be set to the same port you set in your WireGuard's `wg0.conf` file (the default port is `51820`).
+The `Endpoint` here refers to the public IP address and port number for incoming traffic to your network's router from the outside world. This is necessary so that devices outside your network know where to go to connect to your internal network's VPN. Your public IP address is available by visiting [IP Leak](https://www.ipleak.com/), and the `ListenPort` should be set to the same port you set in your WireGuard's `wg0.conf` file (the default port is `51820`).
 
 ```
 Endpoint = YOUR-PUBLIC-IP/DDNS:ListenPort
 ```
 
-For this use case, we're using a full tunnel rather than a [split tunnel](https://vpnbase.com/blog/what-is-vpn-split-tunneling/) (which allows some network traffic to come through outside of the VPN).
+For this use case, we're using a full tunnel rather than a [split tunnel](https://vpnpros.com/blog/what-is-vpn-split-tunneling/) (which allows some network traffic to come through outside of the VPN).
 
 ```
 # For full tunnel use 0.0.0.0/0, ::/0 and for split tunnel use 192.168.1.0/24
@@ -821,17 +821,17 @@ If your ISP does not provide you with a static IP address (most don’t), and yo
 
 So instead of worry about whether your public IP address is `98.10.200.11` or `98.10.200.42`, you can instead point a domain name like `username.us.to` at your public IP address and have the DDNS service update the domain record when your public IP address changes.
 
-There are plenty of DDNS services out there, but I’m using [Afraid.org’s Free DNS](http://freedns.afraid.org) service because it doesn’t nag you to login every 30 days, even on the completely free plan.
+There are plenty of DDNS services out there, but I’m using [Afraid.org’s Free DNS](https://freedns.afraid.org/) service because it doesn’t nag you to login every 30 days, even on the completely free plan.
 
 #### Get a Free DNS Subdomain
 
-First, create a Free DNS account at <http://freedns.afraid.org>.
+First, create a Free DNS account at <https://freedns.afraid.org/>.
 
 After account creation, verify your account using the link you’ll receive in your email. Then go to **Add Subdomain** and enter a **Subdomain** (a username, your name, company name, etc.) and choose a **Domain** (there are many to choose from besides what’s listed, follow the instructions to find the rest). Leave **Type** set to an A record, **TTL** is set to 3600 for free accounts, and **Wildcard** functionality is only for paid accounts.
 
 ![Free DNS Add Subdomain](screenshots/freedns-add-subdomain.png)
 
-Your public IP address should be automatically filled in, but you can visit [IP Leak](http://www.ipleak.com) in a browser to get your public IP address if you need to.
+Your public IP address should be automatically filled in, but you can visit [IP Leak](https://www.ipleak.com/) in a browser to get your public IP address if you need to.
 
 Enter the CAPTCHA text and hit **Save** to continue. You should now have a shiny new subdomain pointing to your network’s public IP address! But what if your public IP address changes at some point?
 
@@ -839,14 +839,14 @@ Enter the CAPTCHA text and hit **Save** to continue. You should now have a shiny
 
 Having a domain name pointed to your public IP address is useless if that IP address changes in the future, which is why DDNS services exist in the first place. We'll need to update our Free DNS record if our network's public IP address changes, which is fairly simple to do.
 
-While logged in at [Free DNS](http://freedns.afraid.org), go to the **Dynamic DNS** page and look for your new subdomain record. Right click the **Direct URL** link associated with your subdomain record and choose **Copy Link**. We'll use this to update your subdomain record directly from the Raspberry Pi.
+While logged in at [Free DNS](https://freedns.afraid.org/), go to the **Dynamic DNS** page and look for your new subdomain record. Right click the **Direct URL** link associated with your subdomain record and choose **Copy Link**. We'll use this to update your subdomain record directly from the Raspberry Pi.
 
 ![Free DNS Domain Record](screenshots/freedns-dynamic-dns.png)
 
 On the Raspberry Pi, create a cronjob that runs every 5 minutes (replacing the XXXXX with the unique identifier in your Direct URL):
 
 ```shell
-crontab -l | { cat; echo "*/5 * * * * curl http://freedns.afraid.org/dynamic/update.php?XXXXX”; } | crontab -
+crontab -l | { cat; echo "*/5 * * * * curl https://freedns.afraid.org/dynamic/update.php?XXXXX”; } | crontab -
 ```
 
 You’ll see `no crontab for ...` on the console, you can safely ignore that. You can change the timing from 5 minutes to 20 minutes (or whatever you'd like) by adjusting the `*/5 * * * *` part to `*/20 * * * *`. Verify that you’ve added the command correctly with:
@@ -871,7 +871,7 @@ Go back to your WireGuard client configuration file and use your new DDNS subdom
 Endpoint = username.us.to:51820
 ```
 
-using the subdomain you chose on [Free DNS](http://freedns.afraid.org) and the `ListenPort` you set in your `/etc/wireguard/wg0.conf` file.
+using the subdomain you chose on [Free DNS](https://freedns.afraid.org/) and the `ListenPort` you set in your `/etc/wireguard/wg0.conf` file.
 
 ### Setting Up Your Phone to Use the VPN
 
@@ -989,7 +989,7 @@ Once you've added this port forwarding on your network's router, restart the dev
 
 ## Checking for a DNS Leak
 
-When connected to your VPN from outside the network, you can check to see if there are any leaks in your DNS lookups using the [DNS Leak Test service](https://dnsleaktest.com).
+When connected to your VPN from outside the network, you can check to see if there are any leaks in your DNS lookups using the [DNS Leak Test service](https://dnsleaktest.com/).
 
 ## References
 
