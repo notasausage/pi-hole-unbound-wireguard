@@ -7,6 +7,11 @@ There are several guides written about this or similar setups, but in practice t
 
 This is what worked for me, your miles may vary.
 
+## Buy Me a Coffee?
+When I first started tinkering with my Raspberry Pi, I had no idea how much time I would invest in getting it up and running. I'm happy to share my findings with the community here for free, but if you'd like to say thanks, a free coffee (or beer) is always welcome.
+
+[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K41NM18)
+
 ## Prerequisites
 While I won't have time to troubleshoot other setups, I'm sharing what I had to work with here. You'll need:
 
