@@ -749,6 +749,9 @@ Adrian Mihalko's excellent instructions on installing WireGuard on a Raspberry P
 **[Some Unofficial WireGuard Documentation](https://github.com/pirate/wireguard-docs)**    
 Unofficial, but hugely helpful, documentation on WireGuard.
 
+**[How to Set Up WireGuard on a Raspberry Pi](https://engineerworkshop.com/2020/02/20/how-to-set-up-wireguard-on-a-raspberry-pi/)**    
+Step-by-step instructions on getting WireGuard working on a Raspberry Pi. Matches what I had already written, but I cleaned up a bit of my own documentation thanks to this article.
+
 ## To-Do
 - [x] Include screenshots of setup processes
 - [ ] Move from [IPtables (deprecated) to nftables](https://wiki.nftables.org/wiki-nftables/index.php/Moving_from_iptables_to_nftables)
