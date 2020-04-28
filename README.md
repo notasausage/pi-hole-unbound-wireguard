@@ -12,7 +12,7 @@ This is what worked for me, your miles may vary.
 
 When I first started tinkering with my Raspberry Pi, I had no idea how much time I would invest in getting it up and running. I'm happy to share my findings with the community here for free, but if you'd like to say thanks, a free coffee (or beer) is always welcome.
 
-[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K41NM18)
+[![ko-fi](screenshots/githubbutton_sm.svg)](https://ko-fi.com/K3K41NM18)
 
 ## Prerequisites
 
