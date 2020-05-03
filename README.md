@@ -576,7 +576,7 @@ First, install the necessary packages before WireGuard setup begins:
 sudo apt install raspberrypi-kernel-headers libelf-dev libmnl-dev build-essential git
 ```
 
-Switch to root with `sudo su` and enter the next 2 commands per the Raspbian/Bullseye Distribution since WireGuard is not included in Earlier Raspbian distribution, we'll use the Raspbian/Bullseye Distribution instead:
+Switch to root with `sudo su` and enter the next command per the Raspbian/Bullseye Distribution since WireGuard is not included in Earlier Raspbian distribution, we'll use the Raspbian/Bullseye Distribution instead to keep it current with potential future kernal changes as well:
 
 ```shell
 echo "deb http://raspbian.raspberrypi.org/raspbian/ bullseye main" | $SUDO tee /etc/apt/sources.list.d/wireguard-bullseye.list
