@@ -576,23 +576,16 @@ First, install the necessary packages before WireGuard setup begins:
 sudo apt install raspberrypi-kernel-headers libelf-dev libmnl-dev build-essential git
 ```
 
-Next, install the Debian distribution keys (otherwise your `apt update` will fail further down the line):
-
-```shell
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7638D0442B90D010
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 04EE7237B7D453EC
-```
-
 Switch to root with `sudo su` and enter the next 2 commands per the [Debian installation commands](https://www.wireguard.com/install/). since WireGuard is not included in the Raspbian distribution, we'll use the Debian one instead:
 
 ```shell
-echo "deb http://deb.debian.org/debian/ unstable main" > /etc/apt/sources.list.d/unstable.list
+echo "deb http://raspbian.raspberrypi.org/raspbian/ bullseye main" | $SUDO tee /etc/apt/sources.list.d/wireguard-bullseye.list
 ```
 
 Then we'll prevent our Raspberry Pi from using the Debian distribution for normal Raspbian packages:
 
 ```shell
-printf 'Package: *\nPin: release a=unstable\nPin-Priority: 90\n' > /etc/apt/preferences.d/limit-unstable
+printf 'Package: *\nPin: release n=bullseye\nPin-Priority: -1\n\nPackage: wireguard wireguard-dkms wireguard-tools\nPin: release n=bullseye\nPin-Priority: 100\n' | $SUDO tee /etc/apt/preferences.d/wireguard-limit-bullseye
 ```
 
 Then `exit` root.
