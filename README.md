@@ -184,7 +184,7 @@ passwd
 
 Enter your current password (`raspberry`) and then type and retype a new password.
 
-**Optional: Change pi Username**
+###### **Optional: Change pi Username**
 
 If you'd rather not stick with the default username of `pi`, changing your Raspbian username is unfortunately not as easy as you'd think. Because you're currently logged in as `pi` and you can't change the username of the current user, you have to get creative with how you go about this. You could create a new user, logout of the `pi` user, login as the new user, and then as root you can change the username of `pi` and its home directory. But now you have a second user.
 
@@ -216,7 +216,7 @@ ssh-add -K ~/.ssh/id_rsa_pi
 
 where `id_rsa_pi` is the name you used to create the SSH key pair. Enter your macOS password to confirm. In order to prevent macOS from forgetting your SSH keys on restart, you can add it to your `~/.ssh/config` file based on [these instructions](https://apple.stackexchange.com/a/250572). Your `~/.ssh/config` file should look something like this:
 
-```
+```text
 Host *
     UseKeychain yes
     AddKeysToAgent yes
@@ -450,20 +450,20 @@ and remove the contents of the file (there is likely nothing there yet) before c
 
 The default port for Unbound is `53` but we're changing it to `5353` here. Feel free to change it to whatever you like, but you'll need to remember it later when we tell Pi-hole where to send upstream DNS requests:
 
-```
+```shell
 port: 5353
 ```
 
 This points to the `root.hints` file you just downloaded:
 
-```
+```shell
 # Use this only when you downloaded the list of primary root servers!
 root-hints: "/var/lib/unbound/root.hints"
 ```
 
 Here we're refusing connections to all interfaces and then we're allowing anything from this device (your Raspberry Pi) and anything from our local subnet (be sure to change `192.168.x.0` to whatever your local subnet is):
 
-```
+```shell
 # IPs authorized to access the DNS Server
 access-control: 0.0.0.0/0 refuse
 access-control: 127.0.0.1 allow
@@ -472,7 +472,7 @@ access-control: 192.168.x.0/24 allow
 
 If your router creates a "Guest Network" with a separate SSID and DHCP range like mine (Apple Time Capsule), devices connecting to that wireless network will not be able to connect to the internet unless you grant access to that subnet. Uncomment one of the lines below or add your own based on your guest network's DHCP range:
 
-```
+```shell
 # If you have a guest network with a separate DHCP range
 #access-control: 172.16.1.0/24 allow
 #access-control: 10.0.0.0/24 allow
@@ -482,7 +482,7 @@ If your router creates a "Guest Network" with a separate SSID and DHCP range lik
 
 You can adjust the cache settings if you like. Instead of the default of not caching, here we set the minimum TTL (Time To Live) to 1 hour, afterwards the DNS will do another lookup of the cached data:
 
-```
+```shell
 # Time To Live (in seconds) for DNS cache. Set cache-min-ttl to 0 remove caching (default).
 # Max cache default is 86400 (1 day).
 cache-min-ttl: 3600
@@ -491,7 +491,7 @@ cache-max-ttl: 86400
 
 When Pi-hole was doing DNS, it created this custom record for <http://pi.hole> so we could easily reach the Web Interface without typing in the static IP address of the Raspberry Pi. Now that Unbound is our DNS, we'll need to create this custom record in the Unbound configuration file. Be sure to replace `192.168.x.x` with the static IP address of your Raspberry Pi:
 
-```
+```shell
 # Create DNS record for Pi-hole Web Interface
 private-domain: "pi.hole"
 local-zone: "pi.hole" static
@@ -514,27 +514,17 @@ Which should return some information, including a `QUESTION SECTION` and an `ANS
 
 #### Testing DNSSEC Validation
 
-Run the following command:
+Run the following command which should return a status of `SERVFAIL` and no `ANSWER SECTION:
 
-```shell
-dig sigfail.verteiltesysteme.net @127.0.0.1 -p 5353
-```
-
-Which should return a status of SERVFAIL and no `ANSWER SECTION`:
-
-```
+```console
+$ dig sigfail.verteiltesysteme.net @127.0.0.1 -p 5353
 ;; ->>HEADER<<- opcode: QUERY, status: SERVFAIL, id: xxxxx
 ```
 
-And then run this command:
+And then run this command which should return a status of `NOERROR` and an `ANSWER SECTION`:
 
-```shell
-dig sigok.verteiltesysteme.net @127.0.0.1 -p 5353
-```
-
-Which should return a status of NOERROR and an `ANSWER SECTION`:
-
-```
+```console
+$ dig sigok.verteiltesysteme.net @127.0.0.1 -p 5353
 ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: xxxx
 ```
 
@@ -546,7 +536,7 @@ First, open the Pi-hole Web Interface in a web browser on your local network: <h
 
 Then go to **Settings > DNS** and uncheck any third party Upstream DNS Servers you had selected during setup. To the Custom 1 (IPv4) Upstream DNS Servers input, add:
 
-```
+```text
 127.0.0.1#5353
 ```
 
@@ -710,14 +700,14 @@ and replace the contents with the [WireGuard wg0.conf](wg0.conf) from this repos
 
 This is the WireGuard interface, which will create a virtual subnet of `10.9.0.0` and assign itself an internal IP address of `10.9.0.1`. You can change this if you'd like, but you'll also need to change the internal IP of VPN clients as well.
 
-```
+```ini
 [Interface]
 Address = 10.9.0.1/24
 ```
 
 The default port for WireGuard, which you can change if you'd like. You'll also need to open up this port on your router, otherwise incoming VPN traffic from outside your network *will not make it to WireGuard*. Information on how to do this is later in the guide.
 
-```
+```ini
 # Default WireGuard port, change to anything that doesn’t conflict
 ListenPort = 51820
 ```
@@ -726,19 +716,19 @@ ListenPort = 51820
 
 Replace `192.168.x.x` with the static IP address of your Raspberry Pi:
 
-```
+```ini
 DNS = 192.168.x.x
 ```
 
 Replace `<server_privatekey>` with the output of your `cat server_privatekey` command earlier:
 
-```
+```ini
 PrivateKey = <server_privatekey>
 ```
 
 We're using `eth0` here when the Raspberry Pi is connected over ethernet (wired), but you can replace both instances with `wlan0` if your Raspberry Pi is connected via wifi (wireless):
 
-```
+```ini
 PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
 ```
@@ -749,7 +739,7 @@ The next section of the WireGuard configuration file is for clients that connect
 
 Replace `<peer1_publickey>` with the output of your `cat peer1_publickey` command earlier:
 
-```
+```ini
 [Peer]
 # Peer 1
 PublicKey = <peer1_publickey>
@@ -757,7 +747,7 @@ PublicKey = <peer1_publickey>
 
 Using the virtual subnet created by WireGuard, give this device an internal IP address of `10.9.0.2`:
 
-```
+```ini
 AllowedIPs = 10.9.0.2/32
 ```
 
@@ -767,7 +757,7 @@ Once your WireGuard configuration file is complete, exit the `nano` editor and s
 
 Now that WireGuard is configured, we'll need to create a client configuration file for each VPN client we want to connect to the network. First, create and edit your first client configuration file:
 
-```
+```shell
 sudo nano /etc/wireguard/peer1.conf
 ```
 
@@ -777,39 +767,39 @@ and replace the contents with the [WireGuard client peer1.conf](peer1.conf) from
 
 Use the same virtual IP address that you used in the `wg0.conf` file earlier for this client:
 
-```
+```ini
 [Interface]
 Address = 10.9.0.2/32
 ```
 
 Replace `192.168.x.x` with the static IP address of your Raspberry Pi:
 
-```
+```ini
 DNS = 192.168.x.x
 ```
 
 Replace `<peer1_privatekey>` with the output of your `cat peer1_privatekey` command earlier:
 
-```
+```ini
 PrivateKey = <peer1_privatekey>
 ```
 
 Replace `<server_publickey>` with the output of your `cat server_publickey` command earlier:
 
-```
+```ini
 [Peer]
 PublicKey = <server_publickey>
 ```
 
 The `Endpoint` here refers to the public IP address and port number for incoming traffic to your network's router from the outside world. This is necessary so that devices outside your network know where to go to connect to your internal network's VPN. Your public IP address is available by visiting [IP Leak](https://www.ipleak.com/), and the `ListenPort` should be set to the same port you set in your WireGuard's `wg0.conf` file (the default port is `51820`).
 
-```
+```ini
 Endpoint = YOUR-PUBLIC-IP/DDNS:ListenPort
 ```
 
 For this use case, we're using a full tunnel rather than a [split tunnel](https://vpnpros.com/blog/what-is-vpn-split-tunneling/) (which allows some network traffic to come through outside of the VPN).
 
-```
+```ini
 # For full tunnel use 0.0.0.0/0, ::/0 and for split tunnel use 192.168.1.0/24
 # or whatever your router’s subnet is
 AllowedIPs = 0.0.0.0/0, ::/0
@@ -867,7 +857,7 @@ Now your DDNS subdomain will always point to the correct public IP address of yo
 
 Go back to your WireGuard client configuration file and use your new DDNS subdomain with the `ListenPort` you set earlier and never worry about your public IP address changing! In the `/etc/wireguard/peer1.conf` file, edit the `Endpoint`:
 
-```
+```ini
 Endpoint = username.us.to:51820
 ```
 
@@ -958,7 +948,7 @@ sudo wg
 
 You should see interface `wg0` and a peer:
 
-```
+```text
 interface: wg0
   public key: XXXXXXXXXXXXXXXXXXXXX
   private key: (hidden)
@@ -974,7 +964,7 @@ Without this step, you will not be able to reach your VPN from outside of the ne
 
 In order to reach your VPN from outside your network, you'll have to set up a **UDP-specific port forward** on your network's router that passes traffic on that port to an internal IP address of your choosing. Generally speaking, this might look like:
 
-```
+```text
 Description: WireGuard VPN
 Public UDP Ports: 51820
 Private IP Address: 192.168.x.x
