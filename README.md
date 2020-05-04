@@ -50,7 +50,7 @@ From the [official Raspberry Pi Downloads page](https://www.raspberrypi.org/down
 
 Next, open the Raspberry Pi Imager app, insert the SD card into your computer, choose an operating system to install (again, I stick with Raspbian Lite for a headless Raspberry Pi), choose your SD card, and click the **WRITE** button. The process takes just a few minutes to move the files, and maybe a minute or two more to verify them.
 
-![Raspberry Pi Imager](screenshots/raspberry-pi-imager.png)
+![Raspberry Pi Imager](screenshots/raspberry-pi-imager.png){: loading="lazy" }
 
 And that's it! Remove the SD card from your computer when prompted, and insert it into your Raspberry Pi before booting it up to a fresh install of Raspbian.
 
@@ -64,13 +64,13 @@ You can [download N00BS](https://www.raspberrypi.org/downloads/noobs/) for free 
 
 **Note:** The full version is around 2.5GB of files that will take around 20-30 minutes to transfer to the SD card, at least with my configuration.
 
-![Download N00BS](screenshots/n00bs-download.png)
+![Download N00BS](screenshots/n00bs-download.png){: loading="lazy" }
 
 #### Step 2: Format the SD Card
 
 If you're on a Mac, do yourself a favor and download the free utility [ApplePi-Baker](https://www.tweaking4all.com/hardware/raspberry-pi/applepi-baker-v2/). You can use it to create backups of your Raspberry Pi's SD card, restore from backups, and much more. For now, though, we'll use it to quickly prep our SD card for N00BS installation.
 
-![Prepare Disk for N00Bs use](screenshots/applepi-baker-prepare.png)
+![Prepare Disk for N00Bs use](screenshots/applepi-baker-prepare.png){: loading="lazy" }
 
 Select the disk utilities (small hard drive icon) in ApplePi-Baker and then right-click on your SD card. One of the menu options is **Prepare Disk for N00Bs use**. Run that and you should have a properly formatted SD card that's ready for your N00BS files.
 
@@ -100,7 +100,7 @@ Where `RASPBERRY` is the name of the SD card (this is the default for ApplePi-Ba
 
 Once the SD card is ready, safely eject it from your computer and insert it into your Raspberry Pi, then boot your Pi. If you need help, follow [these simple instructions](https://projects.raspberrypi.org/en/projects/raspberry-pi-setting-up/3) to get started with your Raspberry Pi. You'll be taken to the N00BS installer screen where you can choose to install any one of several operating systems, including Raspbian. You can choose from Lite (console only), Desktop (includes a GUI), or Full (Desktop and recommended applications).
 
-![N00BS v2.2](screenshots/n00bs-setup.png)
+![N00BS v2.2](screenshots/n00bs-setup.png){: loading="lazy" }
 
 For this setup, we'll install Raspbian Lite (console only). If you ever want to add the desktop GUI, you can [always add that later](https://gist.github.com/kmpm/8e535a12a45a32f6d36cf26c7c6cef51).
 
@@ -163,9 +163,12 @@ Now we'll open the Raspberry Pi's Configuration Tool:
 sudo raspi-config
 ```
 
-![Raspberry Pi Software Configuration Tool](screenshots/raspbian-configuration-tool.png)
+![Raspberry Pi Software Configuration Tool](screenshots/raspbian-configuration-tool.png){: loading="lazy" }
+
 Under the **Interfacing Options** group, go to **SSH** and enable it.
-![Raspberry Pi Software Configuration Tool](screenshots/raspbian-enable-ssh.png)
+
+![Raspberry Pi Software Configuration Tool](screenshots/raspbian-enable-ssh.png){: loading="lazy" }
+
 You should be prompted to restart your Raspberry Pi. If you aren't, exit the Configuration Tool and type:
 
 ```shell
@@ -254,7 +257,7 @@ Here are some additional steps I prefer to take upon setting up my Raspberry Pi.
 sudo raspi-config
 ```
 
-![Raspberry Pi Localisation Options](screenshots/raspbian-localisation-options.png)
+![Raspberry Pi Localisation Options](screenshots/raspbian-localisation-options.png){: loading="lazy" }
 
 - Under **Network Options**, change the **Hostname** to something other than `raspberrypi` (most of the devices on my network are [named after Transformers](https://tfwiki.net/wiki/The_Transformers_(toyline))).
 - Under **Localisation Options**, go to the **Change Locale** options and add `en-us.UTF-8` (or whatever your locale is) to your selected locales, then select it as the default locale (*do not* remove the default `en-gb.UTF-8` as it seems to cause issues)
@@ -291,7 +294,9 @@ Throughout the process of setting things up, you may want to have a backup of yo
 ### Backup the Raspberry Pi SD Card
 
 There are many ways to do this, but if you're on a Mac the aforementioned [ApplePi-Baker](https://www.tweaking4all.com/hardware/raspberry-pi/applepi-baker-v2/) app is fantastic and handles backing up your Raspberry Pi's SD card, not to mention restoring from several different formats as well.
-![ApplePi-Baker macOS App](screenshots/applepi-baker.png)
+
+![ApplePi-Baker macOS App](screenshots/applepi-baker.png){: loading="lazy" }
+
 At any point you want to backup your Raspberry Pi's configuration, first shut down the device with:
 
 ```shell
@@ -308,7 +313,7 @@ and then unplug your Raspberry Pi (or get a [Pi Switch](https://amzn.to/2s7axRP)
 
 When you open the ApplePi-Baker app, you should be able to select the SD card from the **Select a Disk** options (make sure you select the right disk), then choose the **Backup** option. In the file choose window, select **IMG** from the Format selections at the bottom of the window, and then give the backup file a name. This should take some time, be prepared to wait.
 
-![ApplePi-Baker Backup Process](screenshots/applepi-baker-backup-process.png)
+![ApplePi-Baker Backup Process](screenshots/applepi-baker-backup-process.png){: loading="lazy" }
 
 **Note**: The IMG format allows ApplePi-Baker to shrink the Linux partition on backup and expand it on restore, saving you from having to backup the entire size of the SD card rather than just the actual contents.
 
@@ -376,7 +381,7 @@ where `/dev/disk2` is the path to your SD card’s disk and `~/RaspberryPiBackup
 
 [Pi-hole](https://pi-hole.net/) provides ad-blocking at the network level, meaning you not only stop ads from making it to any of the devices on your network, but you also block the unnecessary network requests for those ads and thus reduce bandwidth usage. Pi-hole pairs nicely with a VPN (Virtual Private Network) so that you can connect remotely and still take advantage of ad-blocking from anywhere outside your network.
 
-![Pi-hole Dashboard](screenshots/pi-hole-dashboard.png)
+![Pi-hole Dashboard](screenshots/pi-hole-dashboard.png){: loading="lazy" }
 
 First, you'll need to run the Pi-hole installer:
 
@@ -410,7 +415,7 @@ pihole -a -p
 
 Now you can access the Pi-hole Web Interface in your browser by going to `http://raspberrypi.local/admin` (if your device supports mDNS) or `http://192.168.x.x/admin`, where `192.168.x.x` is the static IP of your Raspberry Pi (you can also use <http://pi.hole/admin> once you point your router to use Pi-hole as your DNS service in the next step). Go to Login, then enter the new password you set for the Web Interface and check the “Remember me for 7 days” checkbox before logging in. You won’t see much on the Dashboard yet since nothing on your network is using Pi-hole, but that should change momentarily.
 
-![Pi-hole Login](screenshots/pi-hole-login.png)
+![Pi-hole Login](screenshots/pi-hole-login.png){: loading="lazy" }
 
 ### Use Pi-hole as Your DNS Server
 
@@ -464,7 +469,7 @@ sudo nano /etc/unbound/unbound.conf.d/pi-hole.conf
 
 and remove the contents of the file (there is likely nothing there yet) before copying and pasting the contents of the [sample pi-hole.conf](pi-hole.conf) configuration file in this repository. When you're done, exit and save the file.
 
-![Unbound Configuration File](screenshots/unbound-conf.png)
+![Unbound Configuration File](screenshots/unbound-conf.png){: loading="lazy" }
 
 #### Configuration Details
 
@@ -572,11 +577,11 @@ Then go to **Settings > DNS** and uncheck any third party Upstream DNS Servers y
 
 Where `127.0.0.1` points the Pi-hole server (the Raspberry Pi) to itself on port `5353`. If you changed the port in your Unbound configuration file, use that port here instead.
 
-![Pi-hole DNS Settings](screenshots/pi-hole-dns-settings.png)
+![Pi-hole DNS Settings](screenshots/pi-hole-dns-settings.png){: loading="lazy" }
 
 Next, uncheck **Never forward non-FQDNs** and **Never forward reverse lookups for private IP ranges** and check **Use Conditional Forwarding** and enter your router’s IP address (typically something like `x.x.x.1` on your subnet), along with the Domain Name (this can be set on your router, usually under the DHCP settings, to something like `home`).
 
-![Pi-hole Advanced DNS Settings](screenshots/pi-hole-conditional-forwarding.png)
+![Pi-hole Advanced DNS Settings](screenshots/pi-hole-conditional-forwarding.png){: loading="lazy" }
 
 Lastly, *do not* check **Use DNSSEC** as Pi-hole is going to be using your Unbound DNS, which already enables DNSSEC (Domain Name System Security Extensions).
 
@@ -724,7 +729,7 @@ sudo nano /etc/wireguard/wg0.conf
 
 and replace the contents with the [WireGuard wg0.conf](wg0.conf) from this repository.
 
-![WireGuard Configuration File](screenshots/wireguard-conf.png)
+![WireGuard Configuration File](screenshots/wireguard-conf.png){: loading="lazy" }
 
 #### Configuration Details
 
@@ -849,7 +854,7 @@ First, create a Free DNS account at <https://freedns.afraid.org/>.
 
 After account creation, verify your account using the link you’ll receive in your email. Then go to **Add Subdomain** and enter a **Subdomain** (a username, your name, company name, etc.) and choose a **Domain** (there are many to choose from besides what’s listed, follow the instructions to find the rest). Leave **Type** set to an A record, **TTL** is set to 3600 for free accounts, and **Wildcard** functionality is only for paid accounts.
 
-![Free DNS Add Subdomain](screenshots/freedns-add-subdomain.png)
+![Free DNS Add Subdomain](screenshots/freedns-add-subdomain.png){: loading="lazy" }
 
 Your public IP address should be automatically filled in, but you can visit [IP Leak](https://www.ipleak.com/) in a browser to get your public IP address if you need to.
 
@@ -861,7 +866,7 @@ Having a domain name pointed to your public IP address is useless if that IP add
 
 While logged in at [Free DNS](https://freedns.afraid.org/), go to the **Dynamic DNS** page and look for your new subdomain record. Right click the **Direct URL** link associated with your subdomain record and choose **Copy Link**. We'll use this to update your subdomain record directly from the Raspberry Pi.
 
-![Free DNS Domain Record](screenshots/freedns-dynamic-dns.png)
+![Free DNS Domain Record](screenshots/freedns-dynamic-dns.png){: loading="lazy" }
 
 On the Raspberry Pi, create a cronjob that runs every 5 minutes (replacing the XXXXX with the unique identifier in your Direct URL):
 
