@@ -869,9 +869,11 @@ On the Raspberry Pi, create a cronjob that runs every 5 minutes (replacing the X
 crontab -l | { cat; echo "*/5 * * * * curl https://freedns.afraid.org/dynamic/update.php?XXXXX”; } | crontab -
 ```
 
-You’ll see `no crontab for ...` on the console, you can safely ignore that. You can change the timing from 5 minutes to 20 minutes (or whatever you'd like) by adjusting the `*/5 * * * *` part to `*/20 * * * *`. Verify that you’ve added the command correctly with:
+You’ll see `no crontab for ...` on the console, you can safely ignore that. You can change the timing from 5 minutes to 20 minutes (or whatever you'd like) by adjusting the `*/5 * * * *` part to `*/20 * * * *`.
 
 **Note:** If the above command doesn't work, you can manually edit your crontab with `crontab -e` and choose an editor (nano is usually the default) and then copy and paste the `*/5 * * * * curl https://freedns.afraid.org/dynamic/update.php?XXXXX` cron job into the file, saving it and exiting before continuing.
+
+Verify that you’ve added the cronjob correctly with:
 
 ```shell
 crontab -l
