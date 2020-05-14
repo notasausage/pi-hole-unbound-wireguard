@@ -16,7 +16,7 @@ When I first started tinkering with my Raspberry Pi, I had no idea how much time
 
 ## Prerequisites
 
-While I won't have time to troubleshoot other setups, I'm sharing what I had to work with here. You'll need:
+While I won't have time to troubleshoot other setups, I'm sharing what I had to work with here. For this setup, I currently use:
 
 - Raspberry Pi 3 Model B Plus Rev 1.3
 - Raspbian 10 Buster Lite
@@ -34,11 +34,31 @@ That said, this process should work on any Raspberry Pi 2 v1.2 and above, and th
 
 ## Installing Raspbian on the Raspberry Pi
 
-There are many operating systems available to run on the Raspberry Pi, but we'll be using the latest version of Raspbian for this tutorial. There are also several different ways to install Raspbian on your Raspberry Pi, including N00Bs (New Out Of the Box Software). It's an easy operating system installer that allows you to erase your Raspberry Pi's SD card and start from scratch quickly, which is great when you're experimenting with your new device.
+There are many operating systems available to run on the Raspberry Pi, but we'll be using the latest version of Raspbian for this tutorial. There are also several different ways to install Raspbian on your Raspberry Pi, including the official [Raspberry Pi Imager](https://www.raspberrypi.org/documentation/installation/installing-images) and N00BS (New Out Of the Box Software), an easy operating system installer that allows you to erase your Raspberry Pi's SD card and start from scratch quickly, which is great when you're experimenting with your new device.
+
+**Note:** After a power outage, my Raspberry Pi wouldn't boot properly so I tried formatting and restoring the SD card to no avail. I also couldn't get my Pi to boot with a fresh copy of N00BS for some reason, so I switched to using the Raspberry Pi Imager, which worked perfectly.
+
+### Installing Raspbian with Raspberry Pi Imager
+
+This is the simplest way to get Raspbian installed on your Raspberry Pi. [Official installation instructions](https://www.raspberrypi.org/documentation/installation/installing-images/README.md) are available from the Raspberry Pi website.
+
+#### Step 1: Download Raspberry Pi Imager
+
+From the [official Raspberry Pi Downloads page](https://www.raspberrypi.org/downloads/), download Raspberry Pi Imager for your OS (Windows, macOS, and Ubuntu apps are available).
+
+#### Step 2: Write the Image to Your SD Card
+
+Next, open the Raspberry Pi Imager app, insert the SD card into your computer, choose an operating system to install (again, I stick with Raspbian Lite for a headless Raspberry Pi), choose your SD card, and click the **WRITE** button. The process takes just a few minutes to move the files, and maybe a minute or two more to verify them.
+
+![Raspberry Pi Imager](screenshots/raspberry-pi-imager.png)
+
+And that's it! Remove the SD card from your computer when prompted, and insert it into your Raspberry Pi before booting it up to a fresh install of Raspbian.
+
+### Installing Raspbian with N00BS
 
 To get started, follow the instructions below, or refer to the [N00BS Installation Guide](https://www.raspberrypi.org/documentation/installation/noobs.md).
 
-### Step 1: Download N00BS
+#### Step 1: Download N00BS
 
 You can [download N00BS](https://www.raspberrypi.org/downloads/noobs/) for free in either the full version (includes Raspbian and LibreELEC installation files) or the Lite version (nothing is pre-loaded, you'll download installation files from the internet during the setup of your Raspberry Pi). The difference here is that the Lite version takes much less time to load onto your SD card but then requires more time during setup on your Raspberry Pi to download all the files.
 
@@ -46,7 +66,7 @@ You can [download N00BS](https://www.raspberrypi.org/downloads/noobs/) for free 
 
 ![Download N00BS](screenshots/n00bs-download.png)
 
-### Step 2: Format the SD Card
+#### Step 2: Format the SD Card
 
 If you're on a Mac, do yourself a favor and download the free utility [ApplePi-Baker](https://www.tweaking4all.com/hardware/raspberry-pi/applepi-baker-v2/). You can use it to create backups of your Raspberry Pi's SD card, restore from backups, and much more. For now, though, we'll use it to quickly prep our SD card for N00BS installation.
 
@@ -58,7 +78,7 @@ If you aren't on a Mac, or can't use ApplePi-Baker, you can format your SD card 
 
 **Note**: After formatting the SD card, I recommend safely ejecting it, removing it from your card reader, and then reinserting it before attempting to copy the N00BS files to it. Without doing this, I sometimes end up with I/O errors when booting from my Raspberry Pi (similar to the [forum thread here](https://www.raspberrypi.org/forums/viewtopic.php?p=459823)). For more on installing Rasbian images, see the [Raspberry Pi documentation](https://www.raspberrypi.org/documentation/installation/installing-images/mac.md).
 
-### Step 3: Copy Files from N00BS Folder to SD Card
+#### Step 3: Copy Files from N00BS Folder to SD Card
 
 Once your downloaded N00BS archive is downloaded and uncompressed, copy all the files and folders inside your N00BS folder to the root of the SD card. You can also refer to the `INSTRUCTIONS-README.txt` file included with N00BS for more.
 
@@ -76,7 +96,7 @@ cp -R ./ /Volumes/RASPBERRY
 
 Where `RASPBERRY` is the name of the SD card (this is the default for ApplePi-Baker's **Prepare Disk for N00BS use** option).
 
-### Booting N00BS and Installing Raspbian
+#### Booting N00BS and Installing Raspbian
 
 Once the SD card is ready, safely eject it from your computer and insert it into your Raspberry Pi, then boot your Pi. If you need help, follow [these simple instructions](https://projects.raspberrypi.org/en/projects/raspberry-pi-setting-up/3) to get started with your Raspberry Pi. You'll be taken to the N00BS installer screen where you can choose to install any one of several operating systems, including Raspbian. You can choose from Lite (console only), Desktop (includes a GUI), or Full (Desktop and recommended applications).
 
