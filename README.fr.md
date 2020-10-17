@@ -1,4 +1,4 @@
-# Raspberry Pi: Pi-hole Ad-Blocking + Unbound DNS + WireGuard VPN
+# Raspberry Pi: Pi-hole Ad-Blocking + Unbound DNS + WireGuard VPN (French translation coming soon...)
 
 This project is centered around getting a Raspberry Pi set up on a simple home network in order to block ads and naughty DNS requests, secure the DNS requests of all devices on the network, and provide a VPN solution for when any of these devices are outside of the network and would like to take advantage of the security (and speed) benefits of the network remotely.
 
@@ -13,10 +13,6 @@ This is what worked for me, your miles may vary.
 When I first started tinkering with my Raspberry Pi, I had no idea how much time I would invest in getting it up and running. I'm happy to share my findings with the community here for free, but if you'd like to say thanks, a free coffee (or beer) is always welcome.
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K41NM18)
-
-## Translations
-
-Available in other languages: [French (coming soon)](README.fr.md)
 
 ## Prerequisites
 
