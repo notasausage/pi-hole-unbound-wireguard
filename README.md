@@ -52,11 +52,19 @@ From the [official Raspberry Pi Downloads page](https://www.raspberrypi.org/down
 
 #### Step 2: Write the Image to Your SD Card
 
-Next, open the Raspberry Pi Imager app, insert the SD card into your computer, choose an operating system to install (again, I stick with Raspbian Lite for a headless Raspberry Pi), choose your SD card, and click the **WRITE** button. The process takes just a few minutes to move the files, and maybe a minute or two more to verify them.
+Next, open the Raspberry Pi Imager app and insert the microSD card into your computer. then choose an operating system to install. We'll stick with Raspbian Lite for a headless Raspberry Pi in this case (you'll want the 64-bit version if you're using a Raspberry Pi 3, 4, or 400). Then choose your microSD card from the second button's modal, at which point the **WRITE** button will be available.
 
 ![Raspberry Pi Imager](screenshots/raspberry-pi-imager.png)
 
-And that's it! Remove the SD card from your computer when prompted, and insert it into your Raspberry Pi before booting it up to a fresh install of Raspbian.
+Before writing the OS to the microSD card, click the gear icon in the bottom right of the window to include advanced settings for your OS. You'll first be prompted:
+
+`Would you like to prefill the wifi password from the system keychain?`
+
+I declined this option as I'll be adding this Raspberry Pi to a wired network. Next, check out the Advanced Options. From here you can enable SSH, set a username and password, configure the wireless LAN, and add locale settings. This will speed up your OS setup time, but all of these options can be done from the Raspberry Pi Configuration Tool later as well.
+
+![Advanced Options](screenshots/pi-imager-advanced-options.png)
+
+Save these options (either for this session only, or to always use) and then click the **WRITE**. The process takes just a few minutes to move the files, and maybe a minute or two more to verify them. And that's it! Remove the SD card from your computer when prompted, and insert it into your Raspberry Pi before booting it up to a fresh install of Raspbian.
 
 ### Installing Raspbian with N00BS
 
