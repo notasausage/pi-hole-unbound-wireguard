@@ -827,8 +827,16 @@ PublicKey = <server_publickey>
 
 The `Endpoint` here refers to the public IP address and port number for incoming traffic to your network's router from the outside world. This is necessary so that devices outside your network know where to go to connect to your internal network's VPN. Your public IP address is available by visiting [IP Leak](https://www.ipleak.com/), and the `ListenPort` should be set to the same port you set in your WireGuard's `wg0.conf` file (the default port is `51820`).
 
+So you can edit this line:
+
 ```
 Endpoint = YOUR-PUBLIC-IP/DDNS:ListenPort
+```
+
+To include your public IP address and the WireGuard port you set previously:
+
+```
+Endpoint = 11.22.33.44:51820
 ```
 
 For this use case, we're using a full tunnel rather than a [split tunnel](https://vpnpros.com/blog/what-is-vpn-split-tunneling/) (which allows some network traffic to come through outside of the VPN).
@@ -845,7 +853,7 @@ If your ISP does not provide you with a static IP address (most don’t), and yo
 
 So instead of worry about whether your public IP address is `98.10.200.11` or `98.10.200.42`, you can instead point a domain name like `username.us.to` at your public IP address and have the DDNS service update the domain record when your public IP address changes.
 
-There are plenty of DDNS services out there, but I’m using [Afraid.org’s Free DNS](https://freedns.afraid.org/) service because it doesn’t nag you to login every 30 days, even on the completely free plan.
+There are plenty of DDNS services out there, but I’m using [Afraid.org’s Free DNS](https://freedns.afraid.org/) service because it doesn’t nag you to login every 30 days, even on the completely free plan (it does however mark your account as "dormant" after 6 months without a login, but it's easy to resume your account without upgrading).
 
 #### Get a Free DNS Subdomain
 
