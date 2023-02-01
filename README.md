@@ -120,7 +120,7 @@ Installation took just 7 minutes (with the full N00BS files, installing Raspbian
 
 ## Initial Setup of Raspbian
 
-To login to your freshly baked Raspberry Pi, use the default username/password pair of `pi` and `raspberry` (yes, very original). We'll change the password soon enough, but the next steps allow us to use our Pi in a headless state without having to rely on an external display or keyboard attached.
+To login to your freshly baked Raspberry Pi, use the default username/password pair of `pi` and `raspberry` (or the username/password combination you set in Raspberry Pi Imager's advanced settings). Steps to to change your password (and username) will be covered later.
 
 ### Prepping Raspbian for SSH
 
@@ -208,17 +208,17 @@ Then type the default password of `raspberry` to login. You should now be greete
 
 ##### Change Your Password
 
-Using default passwords is obviously not a great idea, so your first task after you SSH into your newly setup Raspberry Pi is to change the password using:
+Using default passwords is obviously not a great idea, so if you haven't set a different username and/or password in Raspberry Pi Imager's advanced settings ahead of time, your first task after you SSH into your newly setup Raspberry Pi should be to change the password using:
 
 ```shell
 passwd
 ```
 
-Enter your current password (`raspberry`) and then type and retype a new password.
+Enter your current password (`raspberry` is the default) and then type and retype a new password.
 
 **Optional: Change pi Username**
 
-If you'd rather not stick with the default username of `pi`, changing your Raspbian username is unfortunately not as easy as you'd think. Because you're currently logged in as `pi` and you can't change the username of the current user, you have to get creative with how you go about this. You could create a new user, logout of the `pi` user, login as the new user, and then as root you can change the username of `pi` and its home directory. But now you have a second user.
+If you'd rather not stick with the default username of `pi`, changing your Raspbian username is unfortunately not as easy as you'd think, which is why it's recommended to choose a custom username/password combination using Raspberry Pi Imager. Since you're currently logged in as user `pi` and you can't change the username of the current user, you have to get creative with how you go about this. You could create a new user, logout of the `pi` user, login as the new user, and then as root you can change the username of `pi` and its home directory. But now you have a second user.
 
 You can also follow along with [these instructions on adding a temporary user and using it to change pi's username](https://askubuntu.com/a/34075), but I can't vouch for this method as I skipped it altogether.
 
