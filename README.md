@@ -64,7 +64,11 @@ I declined this option as I'll be adding this Raspberry Pi to a wired network. N
 
 ![Advanced Options](screenshots/pi-imager-advanced-options.png)
 
-Save these options (either for this session only, or to always use) and then click the **WRITE**. The process takes just a few minutes to move the files, and maybe a minute or two more to verify them. And that's it! Remove the SD card from your computer when prompted, and insert it into your Raspberry Pi before booting it up to a fresh install of Raspbian.
+Save these options (either for this session only, or to always use) and then click the **WRITE**. The process takes just a few minutes to format the microSD card and write the files, and maybe a minute or two more to verify them (you may have to enter your computer's username/password to continue).
+
+![Finalizing Write](screenshots/pi-imager-finalizing.png)
+
+And that's it! Remove the microSD card from your computer when prompted, and insert it into your Raspberry Pi before booting it up to a fresh install of Raspbian.
 
 ### Installing Raspbian with N00BS
 
@@ -124,7 +128,7 @@ To login to your freshly baked Raspberry Pi, use the default username/password p
 
 ### Prepping Raspbian for SSH
 
-We should enable SSH on the Raspberry Pi so that we can SSH into it from any device on the network, thus no longer needing the mouse, keyboard, HDMI cable, and screen. You'll need to know the IP address of your Raspberry Pi to continue.
+Enabling SSH on the Raspberry Pi allows us to SSH into it from any device on the network, thus no longer needing the mouse, keyboard, HDMI cable, and screen. You'll need to know the IP address of your Raspberry Pi to continue.
 
 #### Setting Up a Static IP Address
 
@@ -169,6 +173,8 @@ Once you've created a static IP address of your choosing (matching your router's
 
 #### Enabling SSH on the Raspberry Pi
 
+*Note: You can skip this step if you enabled SSH in Raspberry Pi Imager's advanced settings. Just restart your Pi with `sudo reboot` and continue with setup.*
+
 Now we'll open the Raspberry Pi's Configuration Tool:
 
 ```shell
@@ -196,13 +202,13 @@ On your system's console (I'm using the Terminal app for macOS) type:
 ssh pi@192.168.x.x
 ```
 
-Where `pi` is the username on your Raspberry Pi and `192.168.x.x` is the static IP address you just set up. If your system supports [mDNS](https://en.wikipedia.org/wiki/Multicast_DNS) (Macs do by default), you should be able to use `raspberrypi.local` [in place of your IP address](https://www.raspberrypi.org/documentation/remote-access/ip-address.md):
+Where `pi` is the username on your Raspberry Pi and `192.168.x.x` is the static IP address you just set up. If your system supports [mDNS](https://en.wikipedia.org/wiki/Multicast_DNS) (Macs do by default), you should be able to use `raspberrypi.local` (or whatever hostname you chose in Raspberry Pi Imager's advanced settings) [in place of your IP address](https://www.raspberrypi.org/documentation/remote-access/ip-address.md):
 
 ```shell
 ssh pi@raspberrypi.local
 ```
 
-Then type the default password of `raspberry` to login. You should now be greeted with the Raspbian console.
+Then type the default password of `raspberry` (or your custom password) to login. You should now be greeted with the Raspbian console.
 
 **Note**: If you get an error that says the host identification has changed, you’ll need to remove the old entry (the one with the same static IP address) from your `hosts` file first (on a Mac, that file is `~/.ssh/known_hosts`), then try again.
 
@@ -224,7 +230,9 @@ You can also follow along with [these instructions on adding a temporary user an
 
 ##### Password-less SSH Access
 
-It's possible to [configure the Raspberry Pi to allow a computer to access it without providing a password each time](https://www.raspberrypi.org/documentation/remote-access/ssh/passwordless.md) you try to connect. In your Mac's Terminal app, [generate SSH key pairs](https://www.ssh.com/ssh/keygen/) with:
+It's possible to [configure the Raspberry Pi to allow a computer to access it without providing a password each time](https://www.raspberrypi.org/documentation/remote-access/ssh/passwordless.md) you try to connect. If you enabled SSH through Raspberry Pi Imager's advanced settings, you have the option to "Use password authentication" (as we did above) or to "Allow public-key authentication only" (which I haven't investigated fully).
+
+In your Mac's Terminal app, [generate SSH key pairs](https://www.ssh.com/ssh/keygen/) with:
 
 ```shell
 ssh-keygen -t rsa -b 4096
