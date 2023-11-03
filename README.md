@@ -488,10 +488,10 @@ and remove the contents of the file (there is likely nothing there yet) before c
 
 #### Configuration Details
 
-The default port for Unbound is `53` but we're changing it to `5353` here. Feel free to change it to whatever you like, but you'll need to remember it later when we tell Pi-hole where to send upstream DNS requests:
+The default port for Unbound is `53` but we're changing it to `5335` here. Feel free to change it to whatever you like, but you'll need to remember it later when we tell Pi-hole where to send upstream DNS requests:
 
 ```
-port: 5353
+port: 5335
 ```
 
 This points to the `root.hints` file you just downloaded:
@@ -547,7 +547,7 @@ sudo service unbound start
 And test to make sure the Unbound DNS is running (be sure to use the port you set above):
 
 ```shell
-dig pi-hole.net @127.0.0.1 -p 5353
+dig pi-hole.net @127.0.0.1 -p 5335
 ```
 
 Which should return some information, including a `QUESTION SECTION` and an `ANSWER SECTION` that includes `pi-hole.net` and an IP address.
@@ -557,7 +557,7 @@ Which should return some information, including a `QUESTION SECTION` and an `ANS
 Run the following command:
 
 ```shell
-dig sigfail.verteiltesysteme.net @127.0.0.1 -p 5353
+dig sigfail.verteiltesysteme.net @127.0.0.1 -p 5335
 ```
 
 Which should return a status of SERVFAIL and no `ANSWER SECTION`:
@@ -569,7 +569,7 @@ Which should return a status of SERVFAIL and no `ANSWER SECTION`:
 And then run this command:
 
 ```shell
-dig sigok.verteiltesysteme.net @127.0.0.1 -p 5353
+dig sigok.verteiltesysteme.net @127.0.0.1 -p 5335
 ```
 
 Which should return a status of NOERROR and an `ANSWER SECTION`:
@@ -587,10 +587,10 @@ First, open the Pi-hole Web Interface in a web browser on your local network: <h
 Then go to **Settings > DNS** and uncheck any third party Upstream DNS Servers you had selected during setup. To the Custom 1 (IPv4) Upstream DNS Servers input, add:
 
 ```
-127.0.0.1#5353
+127.0.0.1#5335
 ```
 
-Where `127.0.0.1` points the Pi-hole server (the Raspberry Pi) to itself on port `5353`. If you changed the port in your Unbound configuration file, use that port here instead.
+Where `127.0.0.1` points the Pi-hole server (the Raspberry Pi) to itself on port `5335`. If you changed the port in your Unbound configuration file, use that port here instead.
 
 ![Pi-hole DNS Settings](screenshots/pi-hole-dns-settings.png)
 
