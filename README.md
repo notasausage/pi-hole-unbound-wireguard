@@ -22,37 +22,35 @@ Available in other languages: [French (coming soon)](README.fr.md)
 
 While I won't have time to troubleshoot other setups, I'm sharing what I had to work with here. For this setup, I currently use:
 
-- Raspberry Pi 3 Model B Plus Rev 1.3
-- Raspbian 10 Buster Lite
-- 16GB MicroSD card (4GB might be enough, but I'd stick with at least 8GB)
-- Mac running macOS Catalina (for prepping, backing up, and restoring the SD card)
+- Raspberry Pi 4 Model B (with 4GB of RAM)
+- Raspberry Pi OS Lite (latest version)
+- 64GB MicroSD card (4GB might be enough, but I'd stick with at least 8GB), in this case a SanDisk Ultra MicroSD XC
+- Mac running macOS (for prepping, backing up, and restoring the SD card)
 - The free [ApplePi-Baker](https://www.tweaking4all.com/hardware/raspberry-pi/applepi-baker-v2/) app for macOS
 - USB SD card reader (I use this simple [Anker 2-in-1 card reader](https://amzn.to/2OaNBd1))
-- Keyboard (and optional mouse) for initial Raspberry Pi setup (I used my wife's [Apple Magic Keyboard connected via a USB Lightning cable](https://www.reddit.com/r/mac/comments/6m3rpm/question_possible_to_use_magic_keyboard_2_without/))
-- HDMI cable and monitor for initial Raspberry Pi setup (I hooked mine to a TV)
-- Apple Time Capsule router (connected directly to a cable modem, acting as a DHCP server)
+- Keyboard (and optional mouse) for initial Raspberry Pi setup (it's possible to use an [Apple Magic Keyboard connected via a USB Lightning cable](https://www.reddit.com/r/mac/comments/6m3rpm/question_possible_to_use_magic_keyboard_2_without/))
+- HDMI cable and monitor/TV for initial Raspberry Pi setup
+- Wireless/wired router (with the option to open ports) such as the Eero 6 Pro
 
-**Note**: I originally used a cheap wireless mouse that has its own USB Bluetooth dongle, but had errors when booting my Raspberry Pi with it attached. After some research, it seems this may conflict with the Pi's onboard Bluetooth chip, and it was causing issues (dhcpcd was throwing errors as well). During my most recent install from scratch, I removed it completely and everything went smoothly. I don't think you really need a mouse at all if you're running Raspbian Lite anyway...
+**Note**: I originally used a cheap wireless mouse that has its own USB Bluetooth dongle, but had errors when booting my Raspberry Pi with it attached. After some research, it seems this may conflict with the Pi's onboard Bluetooth chip, and it was causing issues (dhcpcd was throwing errors as well). During my most recent install from scratch, I removed it completely and everything went smoothly. I don't think you really need a mouse at all if you're running OS Lite...
 
-That said, this process should work on any Raspberry Pi 2 v1.2 and above, and there are Windows/Linux tools to handle the SD card management.
+That said, this process should work on any Raspberry Pi 3 and above, and there are Windows/Linux tools to handle the SD card management.
 
-## Installing Raspbian on the Raspberry Pi
+## Installing Raspberry Pi OS on the Raspberry Pi
 
-There are many operating systems available to run on the Raspberry Pi, but we'll be using the latest version of Raspbian for this tutorial. There are also several different ways to install Raspbian on your Raspberry Pi, including the official [Raspberry Pi Imager](https://www.raspberrypi.org/documentation/installation/installing-images) and N00BS (New Out Of the Box Software), an easy operating system installer that allows you to erase your Raspberry Pi's SD card and start from scratch quickly, which is great when you're experimenting with your new device.
+There are many operating systems available to run on the Raspberry Pi, but we'll be using the latest version of Raspberry Pi OS for this tutorial. There are also several different ways to install Raspberry Pi OS on your Raspberry Pi, though the official [Raspberry Pi Imager](https://www.raspberrypi.com/software/) is the most often used. N00BS (New Out Of the Box Software) is still available if you look hard enough, but not recommended.
 
-**Note:** After a power outage, my Raspberry Pi wouldn't boot properly so I tried formatting and restoring the SD card to no avail. I also couldn't get my Pi to boot with a fresh copy of N00BS for some reason, so I switched to using the Raspberry Pi Imager, which worked perfectly.
+### Installing Raspberry Pi OS with Raspberry Pi Imager
 
-### Installing Raspbian with Raspberry Pi Imager
-
-This is the simplest way to get Raspbian installed on your Raspberry Pi. [Official installation instructions](https://www.raspberrypi.org/documentation/installation/installing-images/README.md) are available from the Raspberry Pi website.
+This is the simplest way to get Raspbian installed on your Raspberry Pi. [Official installation instructions](https://www.raspberrypi.com/documentation/computers/getting-started.html#raspberry-pi-imager) are available from the Raspberry Pi website.
 
 #### Step 1: Download Raspberry Pi Imager
 
-From the [official Raspberry Pi Downloads page](https://www.raspberrypi.org/downloads/), download Raspberry Pi Imager for your OS (Windows, macOS, and Ubuntu apps are available).
+From the [official Raspberry Pi Downloads page](https://www.raspberrypi.com/software/), download Raspberry Pi Imager for your OS (Windows, macOS, and Ubuntu apps are available).
 
 #### Step 2: Write the Image to Your SD Card
 
-Next, open the Raspberry Pi Imager app and insert the microSD card into your computer. then choose an operating system to install. We'll stick with Raspbian Lite for a headless Raspberry Pi in this case (you'll want the 64-bit version if you're using a Raspberry Pi 3, 4, or 400). Then choose your microSD card from the second button's modal, at which point the **WRITE** button will be available.
+Next, open the Raspberry Pi Imager app and insert the microSD card into your computer. then choose an operating system to install. We'll stick with Raspberry Pi OS Lite for a headless Raspberry Pi in this case (you'll want the 64-bit version if you're using a Raspberry Pi 3, 4, or 400). Then choose your microSD card from the second button's modal, at which point the **WRITE** button will be available.
 
 ![Raspberry Pi Imager](screenshots/raspberry-pi-imager.png)
 
@@ -68,65 +66,15 @@ Save these options (either for this session only, or to always use) and then cli
 
 ![Finalizing Write](screenshots/pi-imager-finalizing.png)
 
-And that's it! Remove the microSD card from your computer when prompted, and insert it into your Raspberry Pi before booting it up to a fresh install of Raspbian.
+And that's it! Remove the microSD card from your computer when prompted, and insert it into your Raspberry Pi before booting it up to a fresh install of Raspberry Pi OS.
 
-### Installing Raspbian with N00BS
-
-To get started, follow the instructions below, or refer to the [N00BS Installation Guide](https://www.raspberrypi.org/documentation/installation/noobs.md).
-
-#### Step 1: Download N00BS
-
-You can [download N00BS](https://www.raspberrypi.org/downloads/noobs/) for free in either the full version (includes Raspbian and LibreELEC installation files) or the Lite version (nothing is pre-loaded, you'll download installation files from the internet during the setup of your Raspberry Pi). The difference here is that the Lite version takes much less time to load onto your SD card but then requires more time during setup on your Raspberry Pi to download all the files.
-
-**Note:** The full version is around 2.5GB of files that will take around 20-30 minutes to transfer to the SD card, at least with my configuration.
-
-![Download N00BS](screenshots/n00bs-download.png)
-
-#### Step 2: Format the SD Card
-
-If you're on a Mac, do yourself a favor and download the free utility [ApplePi-Baker](https://www.tweaking4all.com/hardware/raspberry-pi/applepi-baker-v2/). You can use it to create backups of your Raspberry Pi's SD card, restore from backups, and much more. For now, though, we'll use it to quickly prep our SD card for N00BS installation.
-
-![Prepare Disk for N00Bs use](screenshots/applepi-baker-prepare.png)
-
-Select the disk utilities (small hard drive icon) in ApplePi-Baker and then right-click on your SD card. One of the menu options is **Prepare Disk for N00Bs use**. Run that and you should have a properly formatted SD card that's ready for your N00BS files.
-
-If you aren't on a Mac, or can't use ApplePi-Baker, you can format your SD card using the [SD Association's Formatting Tool](https://www.sdcard.org/downloads/formatter/), available for Windows and macOS. For Linux folks, try [gparted](https://gparted.org/).
-
-**Note**: After formatting the SD card, I recommend safely ejecting it, removing it from your card reader, and then reinserting it before attempting to copy the N00BS files to it. Without doing this, I sometimes end up with I/O errors when booting from my Raspberry Pi (similar to the [forum thread here](https://www.raspberrypi.org/forums/viewtopic.php?p=459823)). For more on installing Rasbian images, see the [Raspberry Pi documentation](https://www.raspberrypi.org/documentation/installation/installing-images/mac.md).
-
-#### Step 3: Copy Files from N00BS Folder to SD Card
-
-Once your downloaded N00BS archive is downloaded and uncompressed, copy all the files and folders inside your N00BS folder to the root of the SD card. You can also refer to the `INSTRUCTIONS-README.txt` file included with N00BS for more.
-
-On a Mac, I used the Terminal to do this via the command line, though you should be able to drag and drop using Finder. To do this via the CLI, first change to the directory where your uncompressed N00BS files are located:
-
-```shell
-cd ~/Downloads/NOOBS_v3_3_1
-```
-
-Or wherever your N00BS folder was created. Then copy all files and directories for N00BS to the SD card:
-
-```shell
-cp -R ./ /Volumes/RASPBERRY
-```
-
-Where `RASPBERRY` is the name of the SD card (this is the default for ApplePi-Baker's **Prepare Disk for N00BS use** option).
-
-#### Booting N00BS and Installing Raspbian
-
-Once the SD card is ready, safely eject it from your computer and insert it into your Raspberry Pi, then boot your Pi. If you need help, follow [these simple instructions](https://projects.raspberrypi.org/en/projects/raspberry-pi-setting-up/3) to get started with your Raspberry Pi. You'll be taken to the N00BS installer screen where you can choose to install any one of several operating systems, including Raspbian. You can choose from Lite (console only), Desktop (includes a GUI), or Full (Desktop and recommended applications).
-
-![N00BS v2.2](screenshots/n00bs-setup.png)
-
-For this setup, we'll install Raspbian Lite (console only). If you ever want to add the desktop GUI, you can [always add that later](https://gist.github.com/kmpm/8e535a12a45a32f6d36cf26c7c6cef51).
-
-Installation took just 7 minutes (with the full N00BS files, installing Raspbian Lite, over ethernet), but depends on many factors including whether you chose Lite or the normal N00BS files and how fast your internet connection is. Once installed, your Raspberry Pi will reboot into the console of a fresh install of Raspbian.
+Note: If you setup a hostname, username/password, and enabled SSH in the Advanced Options, skip to the [Verify You Can SSH into the Raspberry Pi](#verify-you-can-ssh-into-the-raspberry-pi) step. 
 
 ## Initial Setup of Raspbian
 
 To login to your freshly baked Raspberry Pi, use the default username/password pair of `pi` and `raspberry` (or the username/password combination you set in Raspberry Pi Imager's advanced settings). Steps to to change your password (and username) will be covered later.
 
-### Prepping Raspbian for SSH
+### Prepping Raspberry Pi OS for SSH
 
 Enabling SSH on the Raspberry Pi allows us to SSH into it from any device on the network, thus no longer needing the mouse, keyboard, HDMI cable, and screen. You'll need to know the IP address of your Raspberry Pi to continue.
 
@@ -277,8 +225,8 @@ sudo raspi-config
 ![Raspberry Pi Localisation Options](screenshots/raspbian-localisation-options.png)
 
 - Under **Network Options**, change the **Hostname** to something other than `raspberrypi` (most of the devices on my network are [named after Transformers](https://tfwiki.net/wiki/The_Transformers_(toyline))).
-- Under **Localisation Options**, go to the **Change Locale** options and add `en-us.UTF-8` (or whatever your locale is) to your selected locales, then select it as the default locale (*do not* remove the default `en-gb.UTF-8` as it seems to cause issues)
-- Under **Localisation Options**, change the timezone to match yours
+- Under **Localisation Options**, go to the **Change Locale** options and add `en-US.UTF-8` (or whatever your locale is) to your selected locales, then select it as the default locale (*do not* remove the default `en-GB.UTF-8` as it seems to cause issues)
+- Under **Localisation Options**, change the timezone to match yours (unless you already did this in the Raspberry Pi Imager Advanced settings)
 
 ### Update Raspbian and Packages
 
@@ -398,37 +346,35 @@ where `/dev/disk2` is the path to your SD card’s disk and `~/RaspberryPiBackup
 
 ![Pi-hole Dashboard](screenshots/pi-hole-dashboard.png)
 
-First, you'll need to run the Pi-hole installer:
+First, you'll need to install Pi-hole from the Raspberry Pi's command line using either the one-step automated install (piping to `bash` is controversial as it prevents you from reading code that will run on your system):
 
 ```shell
 sudo curl -sSL https://install.pi-hole.net | bash
 ```
-
-**Note**: If you see the error “Script called with non-root privileges” during setup, you can download the install script and run it as root instead. Do this by downloading the script:
+Or manually downloading the installer and running it locally on your Raspberry Pi using these two commands:
 
 ```shell
 wget -O basic-install.sh https://install.pi-hole.net
-```
-
-and then run the installer as root:
-
-```shell
 sudo bash basic-install.sh
 ```
 
+**Note**: If you receive the error `Script called with non-root privileges` using the one-step install, try the two-step instead.
+
 During setup, select **OK** for the first few screens, then select either `eth0` for ethernet (wired) or `wlan0` for wireless (wifi) on the **Choose An Interface** screen. Next, select any **Upstream DNS Provider** since we’ll be using our own Unbound server later. Choose any **Block Lists** you want to use, or leave them all checked by default. Choose both IPv4 and IPv6 on the **Select Protocols** screen. Use the current network settings on the next screen, assuming you gave your Raspberry Pi a static IP address earlier. Then decide if you want to install the Web Interface for Pi-hole (and `lighthttpd` to serve it), which you'll typically want to keep an eye on your traffic and blocked queries (and to make additional configuration changes) in a web browser.
 
-Lastly, decide how you want to log queries and what [privacy level](https://docs.pi-hole.net/ftldns/privacylevels/) you want for FTL (Faster Than Light). Setup will finish, and the Pi-hole DNS service will be running.
+Lastly, decide how you want to log queries and what [privacy level](https://docs.pi-hole.net/ftldns/privacylevels/) you want for FTL (Faster Than Light). Setup will continue on the console, and the Pi-hole DNS service will be up and running after several minutes.
 
 ### Using Pi-hole’s Web Interface
 
-After Pi-hole’s setup is complete, you should see the default Web Interface password on the console. You can change the  password using:
+After Pi-hole’s setup is complete, a default Web Interface password will be shown on the final screen, as well as on the console itself. You can change the password using:
 
 ```shell
 pihole -a -p
 ```
 
-Now you can access the Pi-hole Web Interface in your browser by going to `http://raspberrypi.local/admin` (if your device supports mDNS) or `http://192.168.x.x/admin`, where `192.168.x.x` is the static IP of your Raspberry Pi (you can also use <http://pi.hole/admin> once you point your router to use Pi-hole as your DNS service in the next step). Go to Login, then enter the new password you set for the Web Interface and check the “Remember me for 7 days” checkbox before logging in. You won’t see much on the Dashboard yet since nothing on your network is using Pi-hole, but that should change momentarily.
+Now you can access the Pi-hole Web Interface in your browser by going to `http://raspberrypi.local/admin` (if your device supports mDNS) or `http://192.168.x.x/admin`, where `192.168.x.x` is the static IP of your Raspberry Pi (you can also use <http://pi.hole/admin> once you point your router to use Pi-hole as your DNS service in the next step). Go to Login, then enter your password and check the “Remember me for 7 days” checkbox before logging in. You won’t see much on the Dashboard yet since nothing on your network is using Pi-hole, but that should change momentarily.
+
+**Note**: If there are errors receiving data and/or you see `Lost Connection to API` on your Admin Console dashboard, you may need to restart your Raspberry Pi. This can be done from the Pi-hole Admin Console under Settings.
 
 ![Pi-hole Login](screenshots/pi-hole-login.png)
 
@@ -450,7 +396,7 @@ to temporarily set the device's DNS server to Google until you can figure out wh
 
 > [Unbound](https://www.nlnetlabs.nl/projects/unbound/about/) is a validating, recursive, caching DNS resolver. It is designed to be fast and lean and incorporates modern features based on open standards.
 
-Setting up Unbound DNS with your Pi-hole installation allows us to [operate our own tiny, recursive DNS server](https://docs.pi-hole.net/guides/unbound/) instead of relying on (and sending data to) the big players like Google or Cloudflare.
+Setting up Unbound DNS with your Pi-hole installation allows us to [operate our own tiny, recursive DNS server](https://docs.pi-hole.net/guides/unbound/) instead of relying on (and sending data to) the big players like Google or Cloudflare. [Installation](https://unbound.docs.nlnetlabs.nl/en/latest/getting-started/installation.html) is fairly straighforward.
 
 To install Unbound on the Raspberry Pi:
 
@@ -460,7 +406,7 @@ sudo apt install unbound
 
 **Note**: If you've installed Pi-hole first and then Unbound as I have here, you might see some errors during installation of the latter, specifically `Job for unbound.service failed because the control process exited with error code.` After [some research](https://www.reddit.com/r/pihole/comments/faf0y6/unbound_fails_to_install_with_pihole/), I decided to continue on with [the Pi-hole guide to setting up Unbound](https://docs.pi-hole.net/guides/unbound/#setting-up-pi-hole-as-a-recursive-dns-server-solution), which seemed to work fine. I'm not sure what causes the errors, but I've decided not to investigate further at this time.
 
-Afterwards we'll need to download a `root.hints` file to replace the built-in hints:
+**Optional**: You can download the current root hints (list of primary root servers which are serving the root domain) file and move it into the Unbound file path, but this is only necessary if you are not installing Unbound from a package manager. Using the above command to install Unbound includes the `root.hints` file automatically. See the [Pi-hole documentation on Unbound](https://docs.pi-hole.net/guides/dns/unbound/#setting-up-pi-hole-as-a-recursive-dns-server-solution) for more.
 
 ```shell
 wget -O root.hints https://www.internic.net/domain/named.root
@@ -494,11 +440,9 @@ The default port for Unbound is `53` but we're changing it to `5353` here. Feel 
 port: 5353
 ```
 
-This points to the `root.hints` file you just downloaded:
-
+For daily use, it's best not to increase the verbosity of the logging. If you're debugging a problem, feel free to up it from 1. For more information, see the [Pi-hole documentation](https://docs.pi-hole.net/guides/dns/unbound/#add-logging-to-unbound) on Adding Logging to Unbound.
 ```
-# Use this only when you downloaded the list of primary root servers!
-root-hints: "/var/lib/unbound/root.hints"
+verbosity: 1
 ```
 
 Here we're refusing connections to all interfaces and then we're allowing anything from this device (your Raspberry Pi) and anything from our local subnet (be sure to change `192.168.x.0` to whatever your local subnet is):
@@ -510,7 +454,7 @@ access-control: 127.0.0.1 allow
 access-control: 192.168.x.0/24 allow
 ```
 
-If your router creates a "Guest Network" with a separate SSID and DHCP range like mine (Apple Time Capsule), devices connecting to that wireless network will not be able to connect to the internet unless you grant access to that subnet. Uncomment one of the lines below or add your own based on your guest network's DHCP range:
+If your router creates a "Guest Network" with a separate SSID and DHCP range, devices connecting to that wireless network will not be able to connect to the internet unless you grant access to that subnet. Uncomment one of the lines below or add your own based on your guest network's DHCP range:
 
 ```
 # If you have a guest network with a separate DHCP range
@@ -518,7 +462,7 @@ If your router creates a "Guest Network" with a separate SSID and DHCP range lik
 #access-control: 10.0.0.0/24 allow
 ```
 
-**Note**: Devices connected to an AirPort guest network [will not be able to use Pi-hole](https://www.reddit.com/r/pihole/comments/fjpif9/pihole_doesnt_work_on_guest_network/) since your Raspberry Pi is on a separate DHCP range. They also will not have access to a DNS resolver, so they won't be able to connect to much of anything unless each device is set to manually connect to an outside DNS server, such as `1.1.1.1`. I have yet to figure out whether it's possible to get around this.
+**Note**: Devices connected to an AirPort guest network [will not be able to use Pi-hole](https://www.reddit.com/r/pihole/comments/fjpif9/pihole_doesnt_work_on_guest_network/) since your Raspberry Pi is on a separate DHCP range. They also will not have access to a DNS resolver, so they won't be able to connect to much of anything unless each device is set to manually connect to an outside DNS server, such as `1.1.1.1`.
 
 You can adjust the cache settings if you like. Instead of the default of not caching, here we set the minimum TTL (Time To Live) to 1 hour, afterwards the DNS will do another lookup of the cached data:
 
@@ -594,13 +538,37 @@ Where `127.0.0.1` points the Pi-hole server (the Raspberry Pi) to itself on port
 
 ![Pi-hole DNS Settings](screenshots/pi-hole-dns-settings.png)
 
-Next, uncheck **Never forward non-FQDNs** and **Never forward reverse lookups for private IP ranges** and check **Use Conditional Forwarding** and enter your router’s IP address (typically something like `x.x.x.1` on your subnet), along with the Domain Name (this can be set on your router, usually under the DHCP settings, to something like `home`).
+On the same page, uncheck **Never forward non-FQDNs** and **Never forward reverse lookups for private IP ranges** to ensure that Pi-hole can access local hostnames.
+
+Next, leave **Use DNSSEC** unchecked as Pi-hole is going to be using your Unbound DNS, which already enables DNSSEC (Domain Name System Security Extensions).
+
+Lastly, check **Use Conditional Forwarding** and enter your local network in CIDR notation (typically `192.168.1.0/24` in our case), your router’s IP address (typically something like `x.x.x.1` on your subnet), along with your Local Domain Name (optional and can be set on your router, usually under the DHCP settings, to something like `home`).
 
 ![Pi-hole Advanced DNS Settings](screenshots/pi-hole-conditional-forwarding.png)
 
-Lastly, *do not* check **Use DNSSEC** as Pi-hole is going to be using your Unbound DNS, which already enables DNSSEC (Domain Name System Security Extensions).
-
 **When you're done, don't forget to save your settings.**
+
+### Disable openresolv for Unbound
+
+Debian Bullseye releases automatically install a package called `openresolv` with a certain configuration that will cause unexpected behaviour for Pi-hole and Unbound. For more information, see the [Pi-hole documentation on Unbound](https://docs.pi-hole.net/guides/dns/unbound/#disable-resolvconfconf-entry-for-unbound-required-for-debian-bullseye-releases).
+
+Check to see if this service is enabled for your OS:
+
+```
+systemctl is-active unbound-resolvconf.service
+```
+
+If the command returns `active`, disable the service using the following:
+
+```
+sudo systemctl disable --now unbound-resolvconf.service
+```
+
+Then restart Unbound:
+
+```
+sudo service unbound restart
+```
 
 ### Verify DNSSEC Signatures
 
@@ -610,52 +578,74 @@ To ensure that Unbound is configured correctly, visit this [DNSSEC Resolver Test
 
 > [WireGuard](https://www.wireguard.com/) is an extremely simple yet fast and modern VPN that utilizes state-of-the-art cryptography. It aims to be faster, simpler, leaner, and more useful than IPSec while avoiding the massive headache. It intends to be considerably more performant than OpenVPN.
 
-First, install the necessary packages before WireGuard setup begins:
+
+### Installing WireGuard
+
+With the latest release of Raspberry Pi OS (Bullseye), installation of WireGuard and WireGuard Tools is as simple as running:
 
 ```shell
-sudo apt install raspberrypi-kernel-headers libelf-dev libmnl-dev build-essential git
+sudo apt-get install wireguard wireguard-tools
 ```
 
-Next, install the Debian distribution keys (otherwise your `apt update` will fail further down the line):
+### Intiial Configuration
+
+To get started, we'll need to be the `root` user on your Raspberry Pi to continue with the WireGuard configuration:
 
 ```shell
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 7638D0442B90D010
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 04EE7237B7D453EC
+sudo -i
 ```
 
-Switch to root with `sudo su` and enter the next 2 commands per the [Debian installation commands](https://www.wireguard.com/install/). since WireGuard is not included in the Raspbian distribution, we'll use the Debian one instead:
+Then we'll switch to the directory where we'll store the WireGuard keys (if the directory doesn't exist, this command will create one since we're now the `root` user):
 
 ```shell
-echo "deb http://deb.debian.org/debian/ unstable main" > /etc/apt/sources.list.d/unstable.list
+cd /etc/wireguard
 ```
 
-Then we'll prevent our Raspberry Pi from using the Debian distribution for normal Raspbian packages:
+Set permissions on the entire directory with the [`umask` command](https://www.cyberciti.biz/tips/understanding-linux-unix-umask-value-usage.html) so that only the `root` user can read or write data here:
 
 ```shell
-printf 'Package: *\nPin: release a=unstable\nPin-Priority: 90\n' > /etc/apt/preferences.d/limit-unstable
+umask 077
 ```
 
-Then `exit` root.
-
-Update the package list:
+Next, generate the server’s private & public keys in a single command:
 
 ```shell
-sudo apt update
+wg genkey | tee server.key | wg pubkey > server.pub
 ```
 
-Then install `dirmngr` for handling certificates if it isn't already installed (use `which dirmngr` to check):
+Then generate a client’s private & public keys (where "client_name" is the name of the device that you will be connecting from outside your network with):
 
 ```shell
-sudo apt install dirmngr
+wg genkey | tee client_name.key | wg pubkey > client_name.pub
 ```
 
-### Install WireGuard
-
-Now you can install the WireGuard package:
+Though completely optional, it's also recommended to generate a Pre-Shared Key (PSK) for each client in addition to the keys above for an extra layer of security.
 
 ```shell
-sudo apt install wireguard
+wg genpsk > client_name.psk
 ```
+
+Run the above command with other client names to setup as many VPN devices as you need. To confirm the keys were generated and have the correct file permissions:
+
+```shell
+ls -la
+```
+
+Finally, output your new WireGuard keys to the console and save them (somewhere safe, otherwise be sure and delete them when we're done here) for the next steps:
+
+```shell
+cat server.key
+cat server.pub
+cat client_name.key
+cat client_name.pub
+cat client_name.psk
+```
+
+Lastly, `exit` root before continuing.
+
+
+
+
 
 And to enable IP forwarding, you'll need to uncomment the `net.ipv4.ip_forward=1` line from your `/etc/sysctl.conf` file:
 
@@ -683,56 +673,9 @@ sysctl net.ipv4.ip_forward
 
 You should see `net.ipv4.ip_forward = 1` as a result, otherwise add the above command to your `/etc/sysctl.conf` file.
 
-### Generate Private & Public Keys for WireGuard
 
-In the next steps, we'll need to create private and public keys for both the WireGuard server as well as a VPN client. Once everything is set up, we can create additional keys for other clients to use the VPN as well.
 
-I've found it easiest to first become root before running the commands below:
 
-```shell
-sudo su
-```
-
-Then switch to the directory where we'll store the WireGuard keys:
-
-```shell
-cd /etc/wireguard
-```
-
-If this directory doesn't exist, just run `mkdir /etc/wireguard` and then `cd /etc/wireguard`. Set permissions on the entire directory with the [`umask` command](https://www.cyberciti.biz/tips/understanding-linux-unix-umask-value-usage.html) so that only the `root` user can read or write data here:
-
-```shell
-umask 077
-```
-
-Next, generate the server’s private & public keys in a single command:
-
-```shell
-wg genkey | tee server_privatekey | wg pubkey > server_publickey
-```
-
-Then generate a client’s private & public keys:
-
-```shell
-wg genkey | tee peer1_privatekey | wg pubkey > peer1_publickey
-```
-
-To confirm the keys were generated and have the correct file permissions:
-
-```shell
-ls -la
-```
-
-Finally, output your new WireGuard keys to the console and save them (somewhere safe, otherwise be sure and delete them when we're done here) for the next steps:
-
-```shell
-cat server_privatekey
-cat server_publickey
-cat peer1_privatekey
-cat peer1_publickey
-```
-
-Lastly, `exit` root before continuing.
 
 ### Configure WireGuard Server
 
@@ -748,57 +691,51 @@ and replace the contents with the [WireGuard wg0.conf](wg0.conf) from this repos
 
 #### Configuration Details
 
-This is the WireGuard interface, which will create a virtual subnet of `10.9.0.0` and assign itself an internal IP address of `10.9.0.1`. You can change this if you'd like, but you'll also need to change the internal IP of VPN clients as well.
+This is the WireGuard interface, which will create a virtual subnet of `10.100.0.0` and assign itself an internal IP address of `10.100.0.1`. You can change this if you'd like, but you'll also need to change the internal IP of VPN clients as well.
 
-```
+```shell
 [Interface]
-Address = 10.9.0.1/24
+Address = 10.100.0.1/24
 ```
 
-The default port for WireGuard, which you can change if you'd like. You'll also need to open up this port on your router, otherwise incoming VPN traffic from outside your network *will not make it to WireGuard*. Information on how to do this is later in the guide.
+The default port for WireGuard is 51820, which you can change if you'd like. You'll also need to open up this port on your router, otherwise incoming VPN traffic from outside your network *will not make it to WireGuard*. Information on how to do this is later in the guide.
 
-```
-# Default WireGuard port, change to anything that doesn’t conflict
-ListenPort = 51820
+```shell
+# WireGuard port, change to anything that doesn’t conflict
+ListenPort = 47111
 ```
 
 **Note**: Some public wifi networks will block all ports other than `80` (TCP), `443` (TCP), and `53` (UDP) for HTTP, HTTPS, and DNS respectively. If you are connected to a public wifi network that does this, you will not be able to connect to your WireGuard VPN. One way around this is to set your WireGuard `ListenPort` to `53` and create a forward on your network's router on port `53`, thus circumventing the issue with blocked ports. Do this at your own risk, and definitely, **do not** enable Pi-hole's *Listen on all interfaces, permit all origins* DNS option if you are forwarding port `53` on your router.
 
 Replace `192.168.x.x` with the static IP address of your Raspberry Pi:
 
-```
+```shell
+# Replace with static IP of Raspberry Pi
 DNS = 192.168.x.x
 ```
 
-Replace `<server_privatekey>` with the output of your `cat server_privatekey` command earlier:
+Replace `<server.key>` with the output of your `cat server.key` command earlier:
 
-```
-PrivateKey = <server_privatekey>
-```
-
-We're using `eth0` here when the Raspberry Pi is connected over ethernet (wired), but you can replace both instances with `wlan0` if your Raspberry Pi is connected via wifi (wireless):
-
-```
-PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+```shell
+PrivateKey = <server.key>
 ```
 
 ##### Setup WireGuard Client Connections
 
 The next section of the WireGuard configuration file is for clients that connect to the VPN. For each client (device), you'll need to add another `[Peer]` section here and also create a separate client configuration file (details for that are next).
 
-Replace `<peer1_publickey>` with the output of your `cat peer1_publickey` command earlier:
+Replace `<client_name.pub>` with the output of your `cat client_name.pub` command earlier, as well as `<client_name.psk>` with the output of `cat client_name.psk`:
 
 ```
 [Peer]
-# Peer 1
-PublicKey = <peer1_publickey>
+PublicKey = <client_name.pub>
+PresharedKey = <client_name.psk>
 ```
 
-Using the virtual subnet created by WireGuard, give this device an internal IP address of `10.9.0.2`:
+Using the virtual subnet created by WireGuard, give this device an internal IP address of `10.100.0.2`:
 
 ```
-AllowedIPs = 10.9.0.2/32
+AllowedIPs = 10.100.0.2/32
 ```
 
 Once your WireGuard configuration file is complete, exit the `nano` editor and save your changes.
@@ -807,11 +744,11 @@ Once your WireGuard configuration file is complete, exit the `nano` editor and s
 
 Now that WireGuard is configured, we'll need to create a client configuration file for each VPN client we want to connect to the network. First, create and edit your first client configuration file:
 
-```
-sudo nano /etc/wireguard/peer1.conf
+```shell
+sudo nano /etc/wireguard/client_name.conf
 ```
 
-and replace the contents with the [WireGuard client peer1.conf](peer1.conf) from this repository.
+Name this file based on what client it's for and replace the contents with the [WireGuard client peer1.conf](peer1.conf) from this repository.
 
 #### Configuration Details
 
@@ -819,26 +756,27 @@ Use the same virtual IP address that you used in the `wg0.conf` file earlier for
 
 ```
 [Interface]
-Address = 10.9.0.2/32
+Address = 10.100.0.2/32
 ```
 
 Replace `192.168.x.x` with the static IP address of your Raspberry Pi:
 
 ```
+# Replace with static IP of Raspberry Pi
 DNS = 192.168.x.x
 ```
 
-Replace `<peer1_privatekey>` with the output of your `cat peer1_privatekey` command earlier:
+Replace `<client_name.key>` with the output of your `cat client_name.key` command earlier:
 
 ```
-PrivateKey = <peer1_privatekey>
+PrivateKey = <client_name.key>
 ```
 
-Replace `<server_publickey>` with the output of your `cat server_publickey` command earlier:
+Replace `<server.pub>` with the output of your `cat server.pub` command earlier:
 
 ```
 [Peer]
-PublicKey = <server_publickey>
+PublicKey = <server.pub>
 ```
 
 The `Endpoint` here refers to the public IP address and port number for incoming traffic to your network's router from the outside world. This is necessary so that devices outside your network know where to go to connect to your internal network's VPN. Your public IP address is available by visiting [IP Leak](https://www.ipleak.com/), and the `ListenPort` should be set to the same port you set in your WireGuard's `wg0.conf` file (the default port is `51820`).
@@ -946,13 +884,13 @@ sudo apt install qrencode
 Become the root user in order to read the WireGuard client config:
 
 ```shell
-sudo su
+sudo -i
 ```
 
-Create a QR code from the VPN client configuration we set up earlier:
+Create a QR code from the VPN client configuration we set up earlier (where `<client_name>` is the name of the file you created):
 
 ```shell
-qrencode -t ansiutf8 < /etc/wireguard/peer1.conf
+qrencode -t ansiutf8 < /etc/wireguard/<client_name>.conf
 ```
 
 **Note**: You may have to adjust the size of your terminal/console window to properly show the QR code generated
@@ -973,36 +911,31 @@ On your Raspberry Pi, there are a few more steps needed to complete the setup of
 sudo systemctl enable wg-quick@wg0
 ```
 
-Set the correct permissions on the WireGuard configuration file with:
+Run a "soft reload" of the `systemd` manager:
 
 ```shell
-sudo chown -R root:root /etc/wireguard/
-sudo chmod -R og-rwx /etc/wireguard/
+sudo systemctl daemon-reload
 ```
 
-On your Pi-hole Web Interface, go to **Settings > DNS** and choose the **Listen on all interfaces, permit all origins** option under **Interface listening behavior**, then save your settings.
+And then start WireGuard using the `systemd` manager:
 
-Start WireGuard now with:
+```shell
+sudo systemctl start wg-quick@wg0
+```
+
+You can also start WireGuard directly using:
 
 ```shell
 sudo wg-quick up wg0
 ```
 
-To check and see if the WireGuard interface was created successfully:
+If WireGuard is setup correctly, there will be no output. To check and see if the WireGuard interface was created successfully:
 
 ```shell
 ifconfig wg0
 ```
 
-You should see that `10.9.0.1` internal IP address we created in the `wg0.conf` file, along with some other flags.
-
-Restart your Raspberry Pi with:
-
-```shell
-sudo reboot
-```
-
-Once the Raspberry Pi is done booting, check if WireGuard working:
+You should see that `10.9.0.1` internal IP address we created in the `wg0.conf` file, along with some other flags. For more detailed information about the WireGuard server and client(s), run:
 
 ```shell
 sudo wg
@@ -1010,14 +943,23 @@ sudo wg
 
 You should see interface `wg0` and a peer:
 
-```
+```shell
 interface: wg0
   public key: XXXXXXXXXXXXXXXXXXXXX
   private key: (hidden)
-  listening port: 51820
+  listening port: 47111
 
 peer: XXXXXXXXXXXXXXXXXXXXX
-  allowed ips: 10.9.0.2/32
+  preshared key: (hidden)
+  allowed ips: 10.100.0.2/32
+```
+
+### Adding Additional Clients
+
+Follow the steps above to add peers to WireGuard using the `wg0.conf` configuration file and a new peer configuartion file. Once these changes have been made, restart WireGuard for the changes to take effect:
+
+```shell
+sudo systemctl restart wg-quick@wg0
 ```
 
 ### Open WireGuard VPN Port on Your Router
@@ -1028,20 +970,20 @@ In order to reach your VPN from outside your network, you'll have to set up a **
 
 ```
 Description: WireGuard VPN
-Public UDP Ports: 51820
+Public UDP Ports: 47111
 Private IP Address: 192.168.x.x
-Private UDP Ports: 51820
+Private UDP Ports: 47111
 ```
 
-Where `192.168.x.x` is the internal static IP address of the Raspberry Pi running WireGuard, and `51820` is whatever you set the `ListenPort` to in your `/etc/wireguard/wg0.conf` file. Each router has different settings available, but the above is from my Apple Time Capsule's AirPort Utility in macOS.
+Where `192.168.x.x` is the internal static IP address of the Raspberry Pi running WireGuard, and `47111` is whatever you set the `ListenPort` to in your `/etc/wireguard/wg0.conf` file. Each router has different settings available, but the above is from my Apple Time Capsule's AirPort Utility in macOS.
 
 **Note**: I'm passing just UDP traffic on this port, as WireGuard uses UDP and not TCP.
 
 Once you've added this port forwarding on your network's router, restart the device and now you should be able to connect to your WireGuard VPN from outside your network and enjoy the benefits of network-level ad-blocking from anywhere, at any time!
 
-## Checking for a DNS Leak
+## Checking for DNS Leaks
 
-When connected to your VPN from outside the network, you can check to see if there are any leaks in your DNS lookups using the [DNS Leak Test service](https://dnsleaktest.com/).
+When connected to your VPN from outside the network, you can check to see if there are any leaks in your DNS lookups using the [DNS Leak Test service](https://dnsleaktest.com/). For more information, read [What is a DNS leak and why should I care?](https://www.dnsleaktest.com/what-is-a-dns-leak.html)
 
 ## References
 
@@ -1077,9 +1019,10 @@ Step-by-step instructions on getting WireGuard working on a Raspberry Pi. Matche
 ## To-Do
 
 - [x] Include screenshots of setup processes
+- [ ] Try starting with Homebridge Raspberry Pi OS preset in Raspberry Pi Imager
 - [ ] Move from [IPtables (deprecated) to nftables](https://wiki.nftables.org/wiki-nftables/index.php/Moving_from_iptables_to_nftables)
 - [ ] Add an [SSL certificate for the Pi-hole Web Interface](https://scotthelme.co.uk/securing-dns-across-all-of-my-devices-with-pihole-dns-over-https-1-1-1-1/)
 - [ ] Include [whitelist and blacklist additions](https://scotthelme.co.uk/catching-naughty-devices-on-my-home-network/)
 - [ ] Get local hostnames working in Pi-hole so we can see device names instead of local IP addresses
-- [ ] Add support for guest networks, if possible (specifically for Apple routers like mine)
+- [ ] Add support for guest networks, if possible (especially for Eero devices, like mine)
 - [ ] Include information about WireGuard's *On-Demand Activation* options (and SSID inclusions/exclusions)
