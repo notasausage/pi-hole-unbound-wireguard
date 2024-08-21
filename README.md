@@ -643,11 +643,9 @@ cat client_name.psk
 
 Lastly, `exit` root before continuing.
 
+### Enable IP Forwarding
 
-
-
-
-And to enable IP forwarding, you'll need to uncomment the `net.ipv4.ip_forward=1` line from your `/etc/sysctl.conf` file:
+To enable IP forwarding, you'll need to uncomment the `net.ipv4.ip_forward=1` line from your `/etc/sysctl.conf` file:
 
 ```shell
 sudo nano /etc/sysctl.conf
@@ -672,10 +670,6 @@ sysctl net.ipv4.ip_forward
 ```
 
 You should see `net.ipv4.ip_forward = 1` as a result, otherwise add the above command to your `/etc/sysctl.conf` file.
-
-
-
-
 
 ### Configure WireGuard Server
 
@@ -707,11 +701,12 @@ ListenPort = 47111
 
 **Note**: Some public wifi networks will block all ports other than `80` (TCP), `443` (TCP), and `53` (UDP) for HTTP, HTTPS, and DNS respectively. If you are connected to a public wifi network that does this, you will not be able to connect to your WireGuard VPN. One way around this is to set your WireGuard `ListenPort` to `53` and create a forward on your network's router on port `53`, thus circumventing the issue with blocked ports. Do this at your own risk, and definitely, **do not** enable Pi-hole's *Listen on all interfaces, permit all origins* DNS option if you are forwarding port `53` on your router.
 
-Replace `192.168.x.x` with the static IP address of your Raspberry Pi:
+Normally we would replace `192.168.x.x` with the static IP address of your Raspberry Pi, but we want Unbound to handle DNS and providing a value here would force WireGuard to use `openresolv`, which we do not want.
 
 ```shell
-# Replace with static IP of Raspberry Pi
-DNS = 192.168.x.x
+# Normally static IP of Raspberry Pi, but we don't want
+# resolv.conf to be touched by WireGuard
+#DNS = 192.168.x.x
 ```
 
 Replace `<server.key>` with the output of your `cat server.key` command earlier:
@@ -759,11 +754,12 @@ Use the same virtual IP address that you used in the `wg0.conf` file earlier for
 Address = 10.100.0.2/32
 ```
 
-Replace `192.168.x.x` with the static IP address of your Raspberry Pi:
+Once again, leave the DNS entry commented out so that Unbound can handle our DNS requests:
 
 ```
-# Replace with static IP of Raspberry Pi
-DNS = 192.168.x.x
+# Normally static IP of Raspberry Pi, but we don't want
+# resolv.conf to be touched by WireGuard
+#DNS = 192.168.x.x
 ```
 
 Replace `<client_name.key>` with the output of your `cat client_name.key` command earlier:
@@ -796,9 +792,9 @@ Endpoint = 11.22.33.44:51820
 For this use case, we're using a full tunnel rather than a [split tunnel](https://vpnpros.com/blog/what-is-vpn-split-tunneling/) (which allows some network traffic to come through outside of the VPN).
 
 ```
-# For full tunnel use 0.0.0.0/0, ::/0 and for split tunnel use 192.168.1.0/24
-# or whatever your router’s subnet is
-AllowedIPs = 0.0.0.0/0, ::/0
+# For full tunnel use 0.0.0.0/0 (with ", ::/0" for IPv6) and for
+# split tunnel use 192.168.1.0/24 or whatever your router’s subnet is
+AllowedIPs = 0.0.0.0/0
 ```
 
 ### Optional: Setup Dynamic DNS for Your Public IP address
